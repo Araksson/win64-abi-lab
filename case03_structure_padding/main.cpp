@@ -1,4 +1,4 @@
-// Case 04 — Placeholder
+// Case 03 — Placeholder
 // Structure padding experiment
 
 int main()

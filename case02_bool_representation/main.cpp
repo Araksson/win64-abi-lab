@@ -1,4 +1,4 @@
-// Case 03 — Placeholder
+// Case 02 — Placeholder
 // Boolean representation experiment
 
 int main()

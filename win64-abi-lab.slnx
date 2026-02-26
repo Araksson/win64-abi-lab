@@ -7,4 +7,6 @@
     <Build Solution="*|x86" Project="false" />
     <Build Solution="Release|x64" Project="false" />
   </Project>
+  <Project Path="case02_bool_representation/case02_bool_representation.vcxproj" Id="d468bd8e-6681-426b-9fdc-b88003cf92f9" />
+  <Project Path="case03_structure_padding/case03_structure_padding.vcxproj" Id="0ad65dc8-1e2a-4322-9397-9cf76ad2d9c5" />
 </Solution>

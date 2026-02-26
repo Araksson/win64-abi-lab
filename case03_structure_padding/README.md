@@ -1,4 +1,4 @@
-# Case 04 — Structure Padding and Layout
+# Case 02 — Structure Padding and Layout
 
 ## Status
 
@@ -14,11 +14,3 @@ This experiment will explore structure layout, alignment rules, and padding beha
 - Explicit packing directives
 - Cross-module layout consistency
 - Memory footprint analysis
-
-## Reproducibility
-
-Build using:
-```cmd
-build.bat O1
-```
-Assembly output is generated in the `build/` directory.

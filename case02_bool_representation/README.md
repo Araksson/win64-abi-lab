@@ -1,4 +1,4 @@
-# Case 03 — Boolean Representation
+# Case 02 — Boolean Representation
 
 ## Status
 
@@ -14,11 +14,3 @@ This experiment will investigate how boolean values are represented and propagat
 - Implicit conversions
 - Cross-module boolean passing
 - Optimization influence
-
-## Reproducibility
-
-Build with:
-```cmd
-build.bat O1
-```
-Generated assembly will be available in the `build/` directory.
