@@ -50,12 +50,7 @@ This repository does not aim to propose general-purpose solutions. Instead, it f
 
 ### Build
 
-From the project root:
-
-```cmd
-cd case01_return_value
-build.bat
-```
+**To test the code you can use win64-abi-lab.slnx, and within it you will find each project separately.**
 
 ---
 
