@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MinSpace</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <StringPooling>true</StringPooling>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FloatingPointExceptions>true</FloatingPointExceptions>
+      <LanguageStandard>stdcpp23</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <BuildStlModules>true</BuildStlModules>
+      <AdditionalOptions>/fp:precise
+/clang:-Wshadow
+/clang:-Wconditional-uninitialized
+/clang:-Wuninitialized
+/O1
+/clang:-Wall
+/clang:-Wpedantic
+/clang:-Wconversion
+/clang:-Wsign-conversion
+/clang:-Wnull-dereference
+/clang:-Wdouble-promotion
+/clang:-Wformat=2
+/clang:-Wzero-as-null-pointer-constant
+/clang:-Wreserved-identifier
+/clang:-Werror=old-style-cast
+/clang:-ferror-limit=9999 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <PreventDllBinding>false</PreventDllBinding>
+      <SubSystem>Console</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+      <OptimizeReferences>false</OptimizeReferences>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <AdditionalOptions>/NODEFAULTLIB:LIBCMT  /NODEFAULTLIB:MSVCRT /NODEFAULTLIB:libcmtd /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="case01_return_value_registers/case01_return_value_registers.vcxproj" Id="ce0ff0a9-7408-43ab-8edf-6f17a017e35f">
+    <Build Solution="*|x86" Project="false" />
+    <Build Solution="Release|x64" Project="false" />
+  </Project>
+</Solution>
