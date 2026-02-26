@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <assert.h>
 
-struct BlBool
+struct alignas(4) BlBool
 {
     std::int32_t nValue;
 
@@ -52,6 +52,19 @@ static_assert(sizeof(BlBool) == sizeof(std::int32_t), "BlBool only has sizeof(st
 constexpr BlBool BL_TRUE = { true };
 constexpr BlBool BL_FALSE = { false };
 
+[[clang::noinline]]
+static BlBool DummyCalc(std::int32_t nValue)
+{
+    nValue -= 4;
+    return nValue != 0;
+    /*
+    ASM Here:
+        [...]
+        setne al <<< Normal behavior of BlBool as return
+        [...]
+    */
+}
+
 std::int32_t main()
 {
     static std::int32_t nCount = 0;
@@ -60,7 +73,8 @@ std::int32_t main()
     volatile auto a = static_cast<bool>(nCount++ != 0);
     volatile auto b = static_cast<BOOL>(nCount++ != 0);
     volatile auto c = static_cast<BOOLEAN>(nCount++ != 0);
-    BlBool d = static_cast<BlBool>(nCount++ != 0);
+
+    BlBool d = DummyCalc(nCount);
 
     (void)a;
     (void)b;
