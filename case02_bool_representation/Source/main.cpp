@@ -10,6 +10,7 @@ struct alignas(4) BlBool
     std::int32_t nValue;
 
     //Constructs
+    constexpr BlBool() noexcept : nValue(0) {}
     constexpr BlBool(bool bInValue) noexcept : nValue(bInValue ? 1 : 0) {}
     constexpr BlBool(std::int32_t nInValue) noexcept : nValue((nInValue != 0) ? 1 : 0) {}
 
