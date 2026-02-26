@@ -1,4 +1,4 @@
-# Case 01 — Return Value Registers (Win64 ABI)
+# Case 1 — Return Value Registers (Win64 ABI)
 
 ---
 
@@ -47,7 +47,7 @@ Assembly is generated using `/Fa`.
 
 ## Code Under Test
 
-See `main.cpp`.
+See `Source/main.cpp`.
 
 The experiment defines multiple return functions with different return types and observes their materialization in generated assembly.
 
