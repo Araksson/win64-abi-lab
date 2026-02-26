@@ -12,7 +12,7 @@ namespace experiment
     {
         std::uint32_t a;
     };
-
+    
     struct MediumAggregate
     {
         std::uint64_t a;

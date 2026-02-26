@@ -53,19 +53,6 @@ The experiment defines multiple return functions with different return types and
 
 ---
 
-## Build Configuration
-
-Build using:
-```cmd
-build.bat O0
-build.bat O1
-build.bat O2
-```
-
-Assembly output is generated inside the `build/` directory.
-
----
-
 ## Observations
 
 ### Scalar Types
