@@ -222,7 +222,7 @@ ret
 To eliminate semantic mismatch, we introduce a normalized boolean wrapper.
 
 ```cpp
-struct BlBool
+struct alignas(4) BlBool
 {
     std::int32_t nValue;
 
