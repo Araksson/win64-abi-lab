@@ -25,19 +25,26 @@ static void ByReference(const XMVECTOR& v)
 }
 
 [[clang::noinline]]
+static bool AlmostEqual(float a, float b, float fEpsilon = 1e-6f)
+{
+    return std::fabs(a - b) < fEpsilon;
+}
+
+[[clang::noinline]]
 static void TestFloatSumDiff()
 {
     float a = 3.14f;
     float b = a + 1.00f;
 
     std::cout << "is (3.14 + 1.00f) == 4.14f ?? " << (((a + 1.00f) == 4.14f) ? ">>true<<" : ">>false<<") << " but, 'b' is " << b << std::endl;
+    std::cout << "compare with epsilon check: " << (AlmostEqual(a + 1.00f, 4.14f) ? ">>true<<" : ">>false<<") << std::endl;
 }
 
 [[clang::noinline]]
 static void TestHalfFloat()
 {
     half h = 0_h;
-    for (float f = 0.0f; f < 10.0f; f += 0.1f)
+    for (float f = 0.0f; f < 1.0f; f += 0.1f)
     {
         h = f;
         std::cout << f << " -> " << h << " error: " << (f - h) << std::endl;

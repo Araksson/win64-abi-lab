@@ -107,6 +107,32 @@ Precision loss comes from:
 - Optimization flags
 - Intermediate register precision
 
+### Correct comparison between float point types
+
+This is never done in production:
+
+```cpp
+if (a == b)
+```
+
+Instead, it is done in the following way:
+
+```cpp
+bool AlmostEqual(float a, float b, float fEpsilon = 1e-6f)
+{
+    return std::fabs(a - b) < fEpsilon;
+}
+```
+
+This indicates:
+
+- Literals are not exact.
+- Operations do not preserve mathematical equality.
+- Comparing floats with `==` is dangerous.
+- The compiler may change the result under fast-math.
+
+**The compiler can optimize it this way, or it can be strict and try to use the ` ==` operator.**
+
 ---
 
 ## `float` vs `double` vs `long double`
