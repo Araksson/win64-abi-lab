@@ -12,4 +12,5 @@
     <Build Solution="Release|x64" Project="false" />
   </Project>
   <Project Path="case03_structure_padding/case03_structure_padding.vcxproj" Id="0ad65dc8-1e2a-4322-9397-9cf76ad2d9c5" />
+  <Project Path="case04_float_point_theme/case04_float_point_theme.vcxproj" Id="000c6d4c-b2fe-4d66-bffa-1a0d7d617964" />
 </Solution>

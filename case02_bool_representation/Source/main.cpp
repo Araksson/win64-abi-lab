@@ -1,5 +1,7 @@
-// Case 02 — Placeholder
+// Case 02 — Booleans
 // Boolean representation experiment
+// Compiler: clang-cl (VS2026)
+// Standard: ISO C++23
 
 #include <Windows.h>
 #include <cstdint>
