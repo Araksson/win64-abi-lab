@@ -10,6 +10,8 @@ This case demonstrates:
 - How to correctly test and normalize boolean values.
 - A robust solution using an intermediate normalized type (BlBool).
 
+---
+
 ## The Fundamental Problem
 
 The system does not understand what a boolean is.
@@ -19,6 +21,8 @@ At the ABI level:
 > A boolean is just an integer returned in EAX.
 
 The meaning (`true`/`false`) is purely a language-level abstraction.
+
+---
 
 ## Boolean Types in Windows and C/C++
 
@@ -34,6 +38,8 @@ The meaning (`true`/`false`) is purely a language-level abstraction.
 - `BOOL` and `BOOLEAN` can legally return -1 (0xFFFFFFFF and 0xFF respectively).
 - `bool` and `_Bool` are always normalized to 0 or 1.
 
+---
+
 ## What the Win64 ABI Actually Does
 
 In Microsoft x64 calling convention:
@@ -43,6 +49,8 @@ In Microsoft x64 calling convention:
 
 > The ABI does not encode “boolean-ness”. 
 > It only guarantees the return register.
+
+---
 
 ## Experiment 1 — BOOL Return
 
@@ -73,6 +81,8 @@ Explanation:
 
 The compiler ensures normalization to a 32-bit value in EAX.
 
+---
+
 ## Experiment 2 — C++ bool Return
 
 ```cpp
@@ -91,6 +101,8 @@ However:
 - You cannot store -1 in a bool.
 
 This is a semantic guarantee, not an ABI feature.
+
+---
 
 ## Where Bugs Start — Mixing APIs
 
@@ -120,6 +132,8 @@ if (result)   // correct
 
 This is one of the most common WinAPI bugs.
 
+---
+
 ## Cross Assignment Pitfalls
 
 ```cpp
@@ -135,6 +149,8 @@ if (winValue == cppValue)
 
 May fail depending on expectations.
 The semantic model differs.
+
+---
 
 ## Register-Level Danger (Manual ASM)
 
@@ -166,6 +182,8 @@ ret
 
 **Explicit normalization is critical.**
 
+---
+
 ## Testing Values Correctly
 
 ### Recommended:
@@ -181,6 +199,8 @@ if (value == TRUE)
 ```
 
 Unless you guarantee strict normalization.
+
+---
 
 ## Forcing Normalization
 
@@ -217,6 +237,8 @@ ret
 
 **This makes behavior explicit and deterministic.**
 
+---
+
 ## The Structural Solution — BlBool
 
 To eliminate semantic mismatch, we introduce a normalized boolean wrapper.
@@ -240,6 +262,8 @@ This guarantees:
 - Compatible with both C and C++.
 - Safe for WinAPI interaction.
 - Deterministic comparison behavior.
+
+---
 
 ## Normalized Return Example
 
@@ -309,6 +333,8 @@ The final guarantee is the same:
 The normalization is achieved by logical re-evaluation, not by hardcoding the return value.
 The constructor guarantees that any non-zero input collapses to 1, ensuring consistent cross-API semantics while still respecting the ABI return contract.
 
+---
+
 ## Key Takeaways
 
 - The ABI does not know what a boolean is.
@@ -318,6 +344,8 @@ The constructor guarantees that any non-zero input collapses to 1, ensuring cons
 - Comparing against TRUE can introduce bugs.
 - Explicit normalization removes ambiguity.
 - A wrapper type (like BlBool) eliminates cross-API hazards.
+
+---
 
 ## Practical Recommendation
 
@@ -341,6 +369,8 @@ Instead, enforce:
 ```cpp
 value = (value != 0);
 ```
+
+---
 
 ## Final Insight
 
