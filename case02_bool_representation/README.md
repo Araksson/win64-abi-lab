@@ -6,14 +6,14 @@
 - [The Fundamental Problem](#the-fundamental-problem)
 - [Boolean Types in Windows and C/C++](#boolean-types-in-windows-and-cc)
 - [What the Win64 ABI Actually Does](#what-the-win64-abi-actually-does)
-- [Experiment 1 — BOOL Return](#experiment-1-bool-return)
-- [Experiment 2 — C++ bool Return](#experiment-2-c-bool-return)
-- [Where Bugs Start — Mixing APIs](#where-bugs-start-mixing-apis)
+- [Experiment 1 - BOOL Return](#experiment-1---bool-return)
+- [Experiment 2 - C++ bool Return](#experiment-2---c-bool-return)
+- [Where Bugs Start - Mixing APIs](#where-bugs-start---mixing-apis)
 - [Cross Assignment Pitfalls](#cross-assignment-pitfalls)
 - [Register-Level Danger (Manual ASM)](#register-level-danger-manual-asm)
 - [Testing Values Correctly](#testing-values-correctly)
 - [Forcing Normalization](#forcing-normalization)
-- [The Structural Solution — BlBool](#the-structural-solution-blbool)
+- [The Structural Solution - BlBool](#the-structural-solution-blbool)
 - [Normalized Return Example](#normalized-return-example)
 - [Key Takeaways](#key-takeaways)
 - [Practical Recommendation](#practical-recommendation)
@@ -73,7 +73,7 @@ In Microsoft x64 calling convention:
 
 ---
 
-## Experiment 1 — BOOL Return
+## Experiment 1 - BOOL Return
 
 ```cpp
 [[clang::noinline]]
@@ -104,7 +104,7 @@ The compiler ensures normalization to a 32-bit value in `EAX`.
 
 ---
 
-## Experiment 2 — C++ bool Return
+## Experiment 2 - C++ bool Return
 
 ```cpp
 [[clang::noinline]]
@@ -124,7 +124,7 @@ This is a semantic guarantee, not an ABI feature.
 
 ---
 
-## Where Bugs Start — Mixing APIs
+## Where Bugs Start - Mixing APIs
 
 ### Incorrect Comparison
 
