@@ -1,15 +1,15 @@
-# Case 5 — SIMD, SSE2, AVX and Architectural Discipline
+# Case 5 - SIMD, SSE2, AVX and Architectural Discipline
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [What SIMD Actually Is](#what-simd-actually-is)
-- [Scalar vs SSE2 vs AVX — Practical Example](#scalar-vs-sse2-vs-avx-practical-example)
-- [The Hidden Problem — VEX Encoding Appearing Unexpectedly](#the-hidden-problem-vex-encoding-appearing-unexpectedly)
+- [Scalar vs SSE2 vs AVX - Practical Example](#scalar-vs-sse2-vs-avx---practical-example)
+- [The Hidden Problem - VEX Encoding Appearing Unexpectedly](#the-hidden-problem---vex-encoding-appearing-unexpectedly)
 - [SSE Domain vs AVX Domain](#sse-domain-vs-avx-domain)
 - [Domain Transition and vzeroupper](#domain-transition-and-vzeroupper)
 - [Why is it important to isolate AVX code?](#why-is-it-important-to-isolate-avx-code)
-- [AoS vs SoA — Data Layout Is Critical](#aos-vs-soa-data-layout-is-critical)
+- [AoS vs SoA - Data Layout Is Critical](#aos-vs-soa---data-layout-is-critical)
 - [Auto-Vectorization vs Manual Intrinsics](#auto-vectorization-vs-manual-intrinsics)
 - [Runtime SIMD Detection (CPUID)](#runtime-simd-detection-cpuid)
 - [Hardware vs Software SIMD](#hardware-vs-software-simd)
@@ -68,7 +68,7 @@ Important:
 
 ---
 
-## Scalar vs SSE2 vs AVX — Practical Example
+## Scalar vs SSE2 vs AVX - Practical Example
 
 ### Scalar
 
@@ -134,7 +134,7 @@ vmovaps ymmword ptr [r8], ymm0
 
 ---
 
-## The Hidden Problem — VEX Encoding Appearing Unexpectedly
+## The Hidden Problem - VEX Encoding Appearing Unexpectedly
 
 When compiling with `/arch:AVX` or `/arch:AVX2`, even 128-bit operations may be emitted as VEX-encoded instructions:
 
@@ -229,7 +229,7 @@ Expose only a unified interface:
 
 ---
 
-## AoS vs SoA — Data Layout Is Critical
+## AoS vs SoA - Data Layout Is Critical
 
 ### Array of Structures (AoS)
 

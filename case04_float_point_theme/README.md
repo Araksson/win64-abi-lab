@@ -3,7 +3,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
-- [Visual Demonstration — Fast vs Strict](#visual-demonstration---fast-vs-strict)
+- [Visual Demonstration - Fast vs Strict](#visual-demonstration---fast-vs-strict)
 - [Why does this happen?](#why-does-this-happen)
 - [The Only Truly Stable Values](#the-only-truly-stable-values)
 - [float vs double vs long double](#float-vs-double-vs-long-double)
