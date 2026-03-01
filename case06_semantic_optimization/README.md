@@ -952,6 +952,6 @@ Because in real systems, nothing exists in isolation.
 The goal is not to write cryptic code.
 The goal is to write code that the compiler and the hardware can execute with maximum clarity.
 
-> Modern hardware is fast. But clarity is faster.
+> Modern hardware is fast. But clarity and optimized software is even faster.
 
 ## **And that is why this chapter exists.**
