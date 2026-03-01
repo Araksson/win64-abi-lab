@@ -17,11 +17,11 @@ The Win64 ABI defines register-based return conventions for scalar types and cer
 
 Under this ABI:
 
-- Integral and pointer types are typically returned in RAX.
-- Floating-point types are returned in XMM0.
+- Integral and pointer types are typically returned in `RAX`.
+- Floating-point types are returned in `XMM0`.
 - Larger aggregates may require memory-based return via a hidden pointer parameter.
 
-This experiment verifies these behaviors under clang-cl (Visual Studio 2026).
+This experiment verifies these behaviors under `clang-cl` (Visual Studio 2026).
 
 ---
 
@@ -29,8 +29,8 @@ This experiment verifies these behaviors under clang-cl (Visual Studio 2026).
 
 Under the Win64 ABI:
 
-- `int` and `std::uint64_t` are returned in RAX.
-- Floating point always in XMM0 _when not optimized away_.
+- `int` and `std::uint64_t` are returned in `RAX`.
+- Floating point always in `XMM0` _when not optimized away_.
 - Small aggregates (≤ 8 bytes) may be returned in registers.
 - Aggregates are returned in registers only if their size fits ABI rules.
 
@@ -41,12 +41,12 @@ Under the Win64 ABI:
 | Component | Value |
 |------------|--------|
 | Architecture | x64 (Win64 ABI) |
-| Compiler | clang-cl |
+| Compiler | `clang-cl` |
 | IDE | Visual Studio 2026 |
 | Standard | ISO C++23 |
-| Optimization Levels | O0, O1, O2 |
+| Optimization Levels | `/O0`, `/O1`, `/O2` |
 | Frame Pointer Omission | Disabled |
-| Debug Info | Full (/Zi) |
+| Debug Info | Full (`/Zi`) |
 
 Assembly is generated using `/Fa`.
 
@@ -65,10 +65,10 @@ The experiment defines multiple return functions with different return types and
 
 ### Scalar Types
 
-- `ReturnInt()` places the result in **RAX**.
-- `ReturnU64()` places the result in **RAX**.
-- `ReturnDouble()` places the result in **XMM0**.
-- `ReturnBool()` is materialized in **AL/RAX** depending on optimization level.
+- `ReturnInt()` places the result in `RAX`.
+- `ReturnU64()` places the result in `RAX`.
+- `ReturnDouble()` places the result in `XMM0`.
+- `ReturnBool()` is materialized in `AL`/`RAX` depending on optimization level.
 
 ### Inlining and Return Materialization
 
