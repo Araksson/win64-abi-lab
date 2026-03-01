@@ -1,4 +1,4 @@
-// Case 03 — Structure Layout, Padding, Alignment and ABI Semantics (Win64)
+// Case 03 - Structure Layout, Padding, Alignment and ABI Semantics (Win64)
 // Compiler: clang-cl (VS2026)
 // Standard: ISO C++23
 

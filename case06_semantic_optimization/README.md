@@ -1,16 +1,16 @@
-# Case 6 — Structural & Semantic Optimization in Modern C++
+# Case 6 - Structural & Semantic Optimization in Modern C++
 
 > Small semantic decisions compound into massive performance differences at scale.
 
 This case explores the often-overlooked performance impact of:
 
-- Function call overhead
-- Parameter passing strategies
-- Memory layout decisions
-- Aliasing rules
-- Inlining behavior
-- Data continuity
-- Micro-architectural effects in hot paths
+- Function call overhead.
+- Parameter passing strategies.
+- Memory layout decisions.
+- Aliasing rules.
+- Inlining behavior.
+- Data continuity.
+- Micro-architectural effects in hot paths.
 
 **Unlike previous cases (SIMD, layout), this chapter focuses on how seemingly minor C++ design decisions influence the generated assembly and runtime performance.**
 
@@ -31,7 +31,7 @@ This case explores the often-overlooked performance impact of:
 - [Debug Overhead and Assertions](#debug-overhead-and-assertions)
 - [Templates vs Type Erasure](#templates-vs-type-erasure)
 - [Conclusions](#conclusions)
-- [Epilogue — Why does this case exist?](#epilogue-why-does-this-case-exist)
+- [Epilogue - Why does this case exist?](#epilogue---why-does-this-case-exist)
 
 ---
 
@@ -41,11 +41,11 @@ Optimization is not about tricks.
 
 It is about:
 
-- Removing ambiguity
-- Reducing aliasing
-- Minimizing indirection
-- Improving data locality
-- Allowing the compiler to reason more effectively
+- Removing ambiguity.
+- Reducing aliasing.
+- Minimizing indirection.
+- Improving data locality.
+- Allowing the compiler to reason more effectively.
 
 **Performance is an emergent property of clarity.**
 
@@ -57,12 +57,12 @@ It is about:
 
 All tests:
 
-- Compiled with `-O2` / `-O3`
-- No debug instrumentation
-- Measured using `QueryPerformanceCounter`
-- Warm cache and cold cache scenarios tested
-- Small dataset (L1/L2 bound)
-- Large dataset (L3/DRAM bound)
+- Compiled with `-O2` / `-O3`.
+- No debug instrumentation.
+- Measured using `QueryPerformanceCounter`.
+- Warm cache and cold cache scenarios tested.
+- Small dataset (L1/L2 bound).
+- Large dataset (L3/DRAM bound).
 
 Assembly inspected using:
 
@@ -72,8 +72,8 @@ clang++ -O3 -S -masm=intel
 
 The goal is to observe both:
 
-- Runtime differences
-- Generated assembly differences
+- Runtime differences.
+- Generated assembly differences.
 
 **Additionally, tools such as Ghidra or MSVC Debugger can be used to observe the differences.**
 
@@ -96,7 +96,7 @@ dst[i] = a[i] * b[i] + c[i]
 
 Using SSE (`__m128`, 4 floats per `XMM` register).
 
-### Version 1 — Clean / Sequential SIMD
+### Version 1 - Clean / Sequential SIMD
 
 Processes 4 elements per iteration using a minimal number of `XMM` registers.
 
@@ -121,10 +121,10 @@ void Compute_Clean(float* __restrict dst, const float* __restrict a, const float
 
 Characteristics:
 
-- 1 SIMD block per iteration (4 floats)
-- Single dependency chain
-- Minimal register pressure
-- Simple loop structure
+- 1 SIMD block per iteration (4 floats).
+- Single dependency chain.
+- Minimal register pressure.
+- Simple loop structure.
 
 Expected Assembly Pattern (Simplified):
 
@@ -144,7 +144,7 @@ load -> mul -> add -> store
 
 **Each iteration forms a dependency chain that limits instruction-level parallelism (ILP).**
 
-### Version 2 — Unrolled / Multi-XMM Parallel
+### Version 2 - Unrolled / Multi-XMM Parallel
 
 Processes 16 elements per iteration using 4 independent `XMM` blocks.
 
@@ -185,11 +185,11 @@ void Compute_Unrolled(float* __restrict dst, const float* __restrict a, const fl
 
 Characteristics:
 
-- 4 SIMD blocks per iteration (16 floats)
-- Independent execution chains
-- Higher register pressure
-- Fewer loop branches per element
-- Increased ILP (Instruction-Level Parallelism)
+- 4 SIMD blocks per iteration (16 floats).
+- Independent execution chains.
+- Higher register pressure.
+- Fewer loop branches per element.
+- Increased ILP (Instruction-Level Parallelism).
 
 Expected Assembly Pattern (Simplified):
 
@@ -244,17 +244,17 @@ add0  add1  add2  add3
 
 The unrolled version:
 
-- Reduces loop overhead
-- Increases instruction-level parallelism
-- Keeps multiple `XMM` registers busy simultaneously
-- Allows out-of-order execution to hide latencies
- Improves execution port saturation
+- Reduces loop overhead.
+- Increases instruction-level parallelism.
+- Keeps multiple `XMM` registers busy simultaneously.
+- Allows out-of-order execution to hide latencies.
+ Improves execution port saturation.
 
 Although visually more complex, it often yields:
 
-- 15–40% improvement on large datasets
-- Higher IPC (Instructions Per Cycle)
-- Better utilization of modern superscalar CPUs
+- 15–40% improvement on large datasets.
+- Higher IPC (Instructions Per Cycle).
+- Better utilization of modern superscalar CPUs.
 
 ### Key Insight
 
@@ -262,22 +262,23 @@ Although visually more complex, it often yields:
 
 But in SIMD-heavy hot paths:
 
-- Increasing parallel register usage
-- Reducing loop control overhead
-- Creating independent instruction streams
-- Can significantly improve throughput
+- Increasing parallel register usage.
+- Reducing loop control overhead.
+- Creating independent instruction streams.
+- Can significantly improve throughput.
 
 **Performance is not about aesthetics**
-**It is about how effectively the hardware can execute your intent**
+
+**It is about how effectively the hardware can execute your intent.**
 
 **This can be extended to the use of YMM records (`__m256`)**
 
 For x64, the following are available:
-- 16 XMM registers (XMM0–XMM15) for SSE2
-- 16 YMM registers (YMM0–YMM15) for AVX (Extending the 16 XMM registers)
-- 32 ZMM registers (ZMM0–ZMM31) for AVX-512 (Not fully supported)
+- 16 `XMM` registers (`XMM0`-`XMM15`) for SSE2.
+- 16 `YMM` registers (`YMM0`-`YMM15`) for AVX (Extending the 16 `XMM` registers).
+- 32 `ZMM` registers (`ZMM0`-`ZMM31`) for AVX-512 (Not fully supported).
 
-> Use records sparingly
+> Use records sparingly.
 
 ---
 
@@ -287,10 +288,10 @@ For x64, the following are available:
 
 A function call inside a hot loop introduces:
 
-- Return stack pressure
-- Potential branch misprediction
-- Lost constant propagation
-- Missed vectorization opportunities
+- Return stack pressure.
+- Potential branch misprediction.
+- Lost constant propagation.
+- Missed vectorization opportunities.
 
 ### Non-Optimized Version
 
@@ -327,7 +328,7 @@ for (int i = 0; i < N; ++i)
 
 ### 'Whichever is Suitable` Version
 
-`inline` applies a direct suggestion to the compiler
+`inline` applies a direct suggestion to the compiler:
 
 ```cpp
 inline float GetValue(int i)
@@ -359,22 +360,22 @@ void MyFunction()
 
 ### Observations
 
-- Inline removes call overhead
-- Enables full loop optimization
-- Can produce 100–300% improvement in high-iteration loops
-- Use only in profiled hot paths
-- If the hot path was not tested, configure it as `inline` and let the compiler decide
-- You need to enable `/Ob1` (`inline` - `__forceinline` only) or `/Ob2` (whichever is suitable), otherwise the `inline` will have no effect
+- Inline removes call overhead.
+- Enables full loop optimization.
+- Can produce 100–300% improvement in high-iteration loops.
+- Use only in profiled hot paths.
+- If the hot path was not tested, configure it as `inline` and let the compiler decide.
+- You need to enable `/Ob1` (`inline` - `__forceinline` only) or `/Ob2` (whichever is suitable), otherwise the `inline` will have no effect.
 
 **Inlining is critical in hot paths.**
 
 ### Cautions for using `__forceinline` (MSVC) or `__attribute__((always_inline)) inline` (Clang):
 
-- If the function is very large, it can generate stack overflow
-- Larger code size makes instruction caching more difficult
-- If the function has high memory consumption it can lead to performance loss
-- It will make debugging more difficult
-- This does not apply to recursive functions
+- If the function is very large, it can generate stack overflow.
+- Larger code size makes instruction caching more difficult.
+- If the function has high memory consumption it can lead to performance loss.
+- It will make debugging more difficult.
+- This does not apply to recursive functions.
 
 ---
 
@@ -388,13 +389,13 @@ void Process(BigStruct s);
 
 May cause:
 
-- Copies
-- Stack spills
-- Increased register pressure
+- Copies.
+- Stack spills.
+- Increased register pressure.
 
 **If passing parameters by value, ensure that it does not exceed the maximum size of 2 registers (maximum 16 bytes in x64), otherwise performance could be compromised.**
 
-**The only cases where this extends to a larger size are in the use of vectorized structures such as `XMVECTOR` or `XMMATRIX` that use `XMM` registers**
+**The only cases where this extends to a larger size are in the use of vectorized structures such as `XMVECTOR` or `XMMATRIX` that use `XMM` registers.**
 
 ### Passing by Const Reference
 
@@ -404,13 +405,13 @@ void Process(const BigStruct& s);
 
 Benefits:
 
-- No copy
-- Reduced stack usage
-- Better register allocation
-- It's a safe form and cannot be `nullptr`
-- Access to the fields via `.`
+- No copy.
+- Reduced stack usage.
+- Better register allocation.
+- It's a safe form and cannot be `nullptr`.
+- Access to the fields via `.`.
 
-**Use references `const &` or `&` for added security**
+**Use references `const &` or `&` for added security.**
 
 ### Passing by Pointer Reference
 
@@ -420,18 +421,18 @@ void Process(BigStruct* s);
 
 Benefits:
 
-- It can be `nullptr`
-- The reference can be reassigned by `*s = x;`
-- It allows working with C APIs or legacy code
-- Pointer arithmetic can be applied
+- It can be `nullptr`.
+- The reference can be reassigned by `*s = x;`.
+- It allows working with C APIs or legacy code.
+- Pointer arithmetic can be applied.
 
 Cautions:
 
-- The `nullptr` case must be controlled because references `->` can cause access violations
+- The `nullptr` case must be controlled because references `->` can cause access violations.
 - If the memory it points to is not controlled, it can become a dangling pointer and access invalid memory.
-- The syntax with `->` or `*` can be confusing in certain scenarios
+- The syntax with `->` or `*` can be confusing in certain scenarios.
 
-**Use pointers `const *` or `*` where full control is required but all cautions must be taken**
+**Use pointers `const *` or `*` where full control is required but all cautions must be taken.**
 
 ---
 
@@ -459,18 +460,18 @@ void Add(float* __restrict a, float* __restrict b, float* __restrict c);
 
 Now:
 
-- Full vectorization unlocked
-- Redundant loads eliminated
-- Better register reuse
-- You can get up to 3x performance improvements on hot paths
+- Full vectorization unlocked.
+- Redundant loads eliminated.
+- Better register reuse.
+- You can get up to 3x performance improvements on hot paths.
 
 **On large datasets, this can produce significant speedups.**
 
 ### Using `const`
 
-- Indicates that a value or parameter should not be modified, improving readability and preventing accidental changes
-- The compiler can inject values directly, eliminating memory accesses (like global const vars)
-- Essential for const correctness, especially in function interfaces and class methods
+- Indicates that a value or parameter should not be modified, improving readability and preventing accidental changes.
+- The compiler can inject values directly, eliminating memory accesses (like global const vars).
+- Essential for const correctness, especially in function interfaces and class methods.
 
 ```cpp
 void Process(const float* __restrict a, const float* __restrict b);
@@ -487,9 +488,9 @@ In simple arrays, modern compilers usually optimize both equally.
 
 However, in:
 
-- Custom containers
-- Overloaded operator[]
-- Bounds-checked accessors
+- Custom containers.
+- Overloaded operator[].
+- Bounds-checked accessors.
 
 **Repeated index calculation may introduce overhead**
 
@@ -520,13 +521,13 @@ void Function(std::vector<float>& vData, float fScale)
 
 Benefits:
 
-- Reduced address recalculation
-- Cleaner generated assembly
-- Better pipeline behavior in extreme hot paths
+- Reduced address recalculation.
+- Cleaner generated assembly.
+- Better pipeline behavior in extreme hot paths.
 
 **In intensive loops, `*pPtr++` avoids repeated index calculations and better leverages compiler optimizations. With overloaded `operator[]`, the difference is more noticeable because each access involves a `call` (albeit an inline one), whereas the pointer is a primitive operation. In performance-critical code, using well-managed `pointers` is preferable.**
 
-> Combining it with `__restrict` can improve performance
+> Combining it with `__restrict` can improve performance.
 
 ---
 
@@ -534,9 +535,9 @@ Benefits:
 
 Contiguous memory enables:
 
-- Hardware prefetching
-- Cache line efficiency
-- SIMD optimization
+- Hardware prefetching.
+- Cache line efficiency.
+- SIMD optimization.
 
 ### Bad Example
 
@@ -544,9 +545,9 @@ Contiguous memory enables:
 std::list<Entity>
 ```
 
-- Pointer chasing
-- Cache misses
-- Poor locality
+- Pointer chasing.
+- Cache misses.
+- Poor locality.
 
 ### Good Example
 
@@ -554,9 +555,9 @@ std::list<Entity>
 std::vector<Entity>
 ```
 
-- Contiguous layout
-- Predictable streaming
-- Massive performance improvement in iteration-heavy workloads
+- Contiguous layout.
+- Predictable streaming.
+- Massive performance improvement in iteration-heavy workloads.
 
 **Memory latency dominates performance once working sets exceed L2/L3.**
 
@@ -587,16 +588,16 @@ For clarification:
 
 > Testing in very specific scenarios concluded that under special conditions, the use of custom structures similar to `std::hash`, `std::vector`, `std::unorder_map` or `std::list` achieves better results than the RTL versions due to the specific optimizations that can be performed at the compilation level or in terms of operator overhead. But they should consider that the RTL versions solved 100% of the problems encountered when implementing them in a custom way, although the advantages of custom versions are related to `Initialization` (with or without constructor), `operator` overhead, simplification of `operations` , `structure sizes` and `code obfuscation`.
 
-**Finally, it should be clarified again, RTL structures are excellent for production projects, you just need to know how to choose them appropriately according to the context and it is important to understand that even if the computer you use is very powerful, optimization `done right` will never "do any harm"**
+**Finally, it should be clarified again, RTL structures are excellent for production projects, you just need to know how to choose them appropriately according to the context and it is important to understand that even if the computer you use is very powerful, optimization `done right` will never "do any harm".**
 
 ---
 
 ## `++X` (Prefix) vs `X++` (Postfix)
 
 ### For simple types (`int`, `float`, `pointer`):
-- No difference in optimized code (`++X` vs `X++`)
+- No difference in optimized code (`++X` vs `X++`).
 
-> However, getting used to using `++X` when you don't need to store the previous value is good practice
+> However, getting used to using `++X` when you don't need to store the previous value is good practice.
 
 ```cpp
 for (int i = 0; i < n; ++i)
@@ -605,16 +606,16 @@ for (int i = 0; i < n; i++)
 ```
 
 ### For complex types (`iterators`, `objects`):
-- ++X (Prefix): Modifies and returns *this (no copy)
+- ++X (Prefix): Modifies and returns *this (no copy).
 - X++ (Postfix): Must create a temporary copy to return the original value before increment.
 
-> Using `X++` instead of `++X` creates unnecessary pressure on the registers/stack, in hot paths this can cause performance loss if the structure is very large
+> Using `X++` instead of `++X` creates unnecessary pressure on the registers/stack, in hot paths this can cause performance loss if the structure is very large.
 
-> In experiments, it is possible to obtain improvements of hundreds of ms in hot paths by switching from X++ to ++X
+> In experiments, it is possible to obtain improvements of hundreds of ms in hot paths by switching from `X++` to `++X`.
 
-> To detect these inefficient patterns, you can use `clang-tidy` with rules like `performance-unnecessary-value-param`, and the compiler will issue custom warnings to detect these cases in a `.cpp` file or throughout the entire `project`
+> To detect these inefficient patterns, you can use `clang-tidy` with rules like `performance-unnecessary-value-param`, and the compiler will issue custom warnings to detect these cases in a `.cpp` file or throughout the entire `project`.
 
-> In SIMD-type structures (`__m128` - `__m256` - `__m512`), there is no unit increment with `operators++`. Other types of operations should be used, such as `XMVectorAdd` for `__m128` (or `XMVECTOR`), `_mm256_add_ps`/`_mm256_add_epi32` for `__m256`, and `_mm512_add_ps`/`_mm512_add_epi32` for `__m512`
+> In SIMD-type structures (`__m128` - `__m256` - `__m512`), there is no unit increment with `operators++`. Other types of operations should be used, such as `XMVectorAdd` for `__m128` (or `XMVECTOR`), `_mm256_add_ps`/`_mm256_add_epi32` for `__m256`, and `_mm512_add_ps`/`_mm512_add_epi32` for `__m512`.
 
 ---
 
@@ -622,25 +623,25 @@ for (int i = 0; i < n; i++)
 
 Recursion:
 
-- Stack growth
-- Call overhead
-- Reduced predictability
+- Stack growth.
+- Call overhead.
+- Reduced predictability.
 
 Iteration:
 
-- Better branch prediction
-- Improved inlining potential
-- More cache-friendly
+- Better branch prediction.
+- Improved inlining potential.
+- More cache-friendly.
 
-**Avoid recursion in high-frequency hot paths unless tail-call elimination is guaranteed**
+**Avoid recursion in high-frequency hot paths unless tail-call elimination is guaranteed.**
 
-> **Recursion** is very useful in controlled multiple `calls`, such as `binary trees`, where the number of `frames` generated on the `stack` never exceeds an optimal threshold. Example: Consider that `binary trees` with `32 frames` on the `stack` require a number of nodes N of `2³²` (`4,294,967,296`), an enormous amount for practical purposes, making recursion very useful in this case
+> **Recursion** is very useful in controlled multiple `calls`, such as `binary trees`, where the number of `frames` generated on the `stack` never exceeds an optimal threshold. Example: Consider that `binary trees` with `32 frames` on the `stack` require a number of nodes N of `2³²`, an enormous amount for practical purposes, making recursion very useful in this case.
 
-> **Recursion** generally does not allow `inline`
+> **Recursion** generally does not allow `inline`.
 
-> **Iteration** allows the compiler to optimize hot paths, add `inline` code, and efficiently enable `const` and `__restrict` optimizations
+> **Iteration** allows the compiler to optimize hot paths, add `inline` code, and efficiently enable `const` and `__restrict` optimizations.
 
-**Recursion can be optimized using `lambdas` (if needed locally only) since they can `take environment variables` and are very useful**
+**Recursion can be optimized using `lambdas` (if needed locally only) since they can `take environment variables` and are very useful.**
 
 ### Examples
 
@@ -689,14 +690,13 @@ int main()
 
 > As a final consideration, avoid combining `recursion` with `std::function`, as this adds additional overhead, preventing the possibility of `inlined` and generating as `constexpr` when making indirect calls (similar to the `virtual table` of structures).
 
-**Conclusion: Avoid using recursion if safe use is not guaranteed**
+**Conclusion: Avoid using recursion if safe use is not guaranteed.**
 
 ---
 
 ## Arithmetic Micro-Optimizations
 
-Operations such as division can generate additional overhead in hot paths
-
+Operations such as division can generate additional overhead in hot paths.
 Instead of:
 
 ```cpp
@@ -710,15 +710,15 @@ float inv = 1.0f / value;
 a[i] *= inv;
 ```
 
-> At the CPU level, a division `A/B` uses a `DIVSS` (`float`) or `DIVSD` (`double`) instruction, generating latencies of `9-27` CPU cycles. A division is performed every `5 to 10` cycles and is not fully pipelined, which limits parallelism
+> At the CPU level, a division `A/B` uses a `DIVSS` (`float`) or `DIVSD` (`double`) instruction, generating latencies of `9-27` CPU cycles. A division is performed every `5 to 10` cycles and is not fully pipelined, which limits parallelism.
 
-> Instead, calculating the reciprocal (`1/B`) is more efficient (especially if it is constant, it is done at `compile time`), latencies are reduced to `3-5` CPU cycles, direct `MULSS` (`float`) or `MULSD` (`double`) operations are generated and 2 multiplications are performed per cycle
+> Instead, calculating the reciprocal (`1/B`) is more efficient (especially if it is constant, it is done at `compile time`), latencies are reduced to `3-5` CPU cycles, direct `MULSS` (`float`) or `MULSD` (`double`) operations are generated and 2 multiplications are performed per cycle.
 
-**Here you can see one of the differences between the `/fp:precise`/`/fp:strict` and `/fp:fast` optimizations**
+**Here you can see one of the differences between the `/fp:precise`/`/fp:strict` and `/fp:fast` optimizations.**
 
-**Using `float` or `double` `A * 1 / B` gains a lot of speed but reduces precision because `1 / B` absorbs rounding with `/fp:fast`**
+**Using `float` or `double` `A * 1 / B` gains a lot of speed but reduces precision because `1 / B` absorbs rounding with `/fp:fast`.**
 
-> Use explicitly in cases where rounding is not important
+> Use explicitly in cases where rounding is not important.
 
 `Float`:
 ```cpp
@@ -774,7 +774,7 @@ imul rax, rdi                       ;rax = A * 0xCCCCCCCD
 shr rax, 35                         ;rax = (A * 0xCCCCCCCD) >> 35
 ```
 
-**The compiler usually detects these cases and implements them automatically, when the appropriate optimization is applied**
+**The compiler usually detects these cases and implements them automatically, when the appropriate optimization is applied.**
 
 ---
 
@@ -789,17 +789,17 @@ alignas(32) float data2[M];
 
 Ensures:
 
-- No split loads
-- No cache-line crossing penalties
-- Full AVX throughput
+- No split loads.
+- No cache-line crossing penalties.
+- Full AVX throughput.
 
 **Misaligned data silently degrades performance**
 
-> Using `alignas(16)` or `alignas(32)` instructions slightly improves performance on hot paths compared to misaligned instructions
+> Using `alignas(16)` or `alignas(32)` instructions slightly improves performance on hot paths compared to misaligned instructions.
 
-> If the set of misaligned values of 16 or 32 bytes crosses 64-byte cache lines, two accesses are performed, and general performance is penalized
+> If the set of misaligned values of 16 or 32 bytes crosses 64-byte cache lines, two accesses are performed, and general performance is penalized.
 
-> For aligned instructions, `movaps` and `vmovaps` are used, and for misaligned instructions `movups` and `vmovups` are used (SIMD and AVX respectively)
+> For aligned instructions, `movaps` and `vmovaps` are used, and for misaligned instructions `movups` and `vmovups` are used (SIMD and AVX respectively).
 
 | Operation | Aligned | Misaligned |
 | --------- | ------- | ---------- |
@@ -811,11 +811,11 @@ Ensures:
 
 ### Conclusion
 
-- Use `alignas(16)` or `alignas(32)` and prefer misaligned instructions (`_mm256_loadu_ps`, `_mm256_storeu_ps`) in AVX+
-- On modern hardware, there is no performance loss if the data is aligned, but gain safety against unexpected misalignments
-- On older or `Atom` processors, `alignment` remains critical to avoid penalties
+- Use `alignas(16)` or `alignas(32)` and prefer misaligned instructions (`_mm256_loadu_ps`, `_mm256_storeu_ps`) in AVX+.
+- On modern hardware, there is no performance loss if the data is aligned, but gain safety against unexpected misalignments.
+- On older or `Atom` processors, `alignment` remains critical to avoid penalties.
 
-> It is recommended to search for alignments in critical hot paths. For example, in **memory allocators** search for alignments to 16-32-64 bytes; in **vertex operations** search for alignments to 16 bytes; in **local cache arrays** search for alignments to 16-32 bytes, and so on. **This will greatly help in SIMD operations**
+> It is recommended to search for alignments in critical hot paths. For example, in **memory allocators** search for alignments to 16-32-64 bytes; in **vertex operations** search for alignments to 16 bytes; in **local cache arrays** search for alignments to 16-32 bytes, and so on. **This will greatly help in SIMD operations.**
 
 ---
 
@@ -840,11 +840,11 @@ assert(a && b && c);
 Or move outside the loop.
 Debug instrumentation must not distort performance measurement excessively.
 
-> In `release with debug` mode, `assert` can be implemented with `obfuscation mechanisms`, and in these situations, combining conditions will help reduce overhead (mainly in hot paths). That's why this small section was added to **Optimization**
+> In `release with debug` mode, `assert` can be implemented with `obfuscation mechanisms`, and in these situations, combining conditions will help reduce overhead (mainly in hot paths). That's why this small section was added to **Optimization**.
 
-> A condition (usually assignment and truncation to a 1-bit `bool`), plus explicit obfuscation and additional calls, generates CPU overhead and stack pressure. Use sparingly and only in `release with debug` mode
+> A condition (usually assignment and truncation to a 1-bit `bool`), plus explicit obfuscation and additional calls, generates CPU overhead and stack pressure. Use sparingly and only in `release with debug` mode.
 
-> Finally, it's worth noting that using "forgotten" `breakpoints` (with conditions) adds significant overhead when debugging the program with an IDE (such as `Visual Studio`). It's recommended to keep the "Breakpoints" window active during debugging to avoid **surprises**
+> Finally, it's worth noting that using "forgotten" `breakpoints` (with conditions) adds significant overhead when debugging the program with an IDE (such as Visual Studio). It's recommended to keep the "Breakpoints" window active during debugging to avoid **surprises**.
 
 ---
 
@@ -857,9 +857,9 @@ Debug instrumentation must not distort performance measurement excessively.
 | Use | Only in `low-level code` (drivers, serialization), when unavoidable| For generic and reusable code (e.g., `std::vector<T>`) |
 | Aliasing | Can violate strict aliasing, leading to erroneous optimizations | Complies with `C++ rules` (does not violate strict aliasing) |
 
-**Type clarity improves code generation quality**
+**Type clarity improves code generation quality.**
 
-> In the case of `template`, for `C++20` you can export them as modules and then reuse them between `.cpp` files, but you must explicitly specify each exported type there
+> In the case of `template`, for `C++20` you can export them as modules and then reuse them between `.cpp` files, but you must explicitly specify each exported type there.
 
 ```cpp
 // math.ixx
@@ -879,7 +879,7 @@ int main()
 
 > If you want to avoid using `import`/`export`, you can simply place the `template` definition in a `.h` file and reuse it from there. However, this will reduce compilation time.
 
-> The problem of intermodularity isn't present with `reinterpret_cast`. It avoids exposing code or generating complex exports, but it requires a high level of understanding of how the code works to prevent loss reference or `offset` issues
+> The problem of intermodularity isn't present with `reinterpret_cast`. It avoids exposing code or generating complex exports, but it requires a high level of understanding of how the code works to prevent loss reference or `offset` issues.
 
 ---
 
@@ -888,30 +888,30 @@ int main()
 Performance degradation rarely comes from one large mistake.
 It comes from:
 
-- Thousands of small inefficiencies
-- Ambiguous aliasing
-- Poor memory layout
-- Fragmented allocations
-- Unnecessary calls
+- Thousands of small inefficiencies.
+- Ambiguous aliasing.
+- Poor memory layout.
+- Fragmented allocations.
+- Unnecessary calls.
 
 When scaled to millions of iterations or millions of objects:
 
-- Minor inefficiencies become architectural bottlenecks
-- Optimization is not premature when the workload is massive
+- Minor inefficiencies become architectural bottlenecks.
+- Optimization is not premature when the workload is massive.
 
-**It is structural engineering**
+**It is structural engineering.**
 
 ### Final Note
 
 This case demonstrates that:
 
-- **Compiler optimization is powerful, but only when you allow it to reason correctly**
-- **Clarity, structure, and data layout matter more than micro-tweaks**
-- **Performance is designed — not discovered by accident**
+- **Compiler optimization is powerful, but only when you allow it to reason correctly.**
+- **Clarity, structure, and data layout matter more than micro-tweaks.**
+- **Performance is designed - not discovered by accident.**
 
 ---
 
-## Epilogue — Why does this case exist?
+## Epilogue - Why does this case exist?
 
 At some point, optimization stops being about speed and starts being about understanding.
 
@@ -919,13 +919,13 @@ Case 6 is not about proving that `++i` is always faster than `i++`, or that `__r
 
 It is about something deeper:
 
-> Every line of code carries semantic meaning — and the hardware responds to that meaning
+> Every line of code carries semantic meaning - and the hardware responds to that meaning.
 
 Modern CPUs are extraordinarily powerful. Yes, an Ryzen 9 - i9 can brute-force a large amount of inefficiency.
 
 But performance engineering is not about relying on brute force. It is about removing friction.
 
-Small inefficiencies in isolation are often negligible. But software at scale does not execute a line once — it executes it millions, billions, or trillions of times.
+Small inefficiencies in isolation are often negligible. But software at scale does not execute a line once - it executes it millions, billions, or trillions of times.
 
 A single extra instruction in a cold function is irrelevant.
 A single extra instruction in a hot path can define your frame time.
@@ -933,14 +933,14 @@ A single extra instruction in a hot path can define your frame time.
 The real lesson of this case is not that micro-optimizations always matter.
 It is that:
 
-- Data layout affects vectorization
-- Aliasing affects register reuse
-- Function boundaries affect inlining
-- Memory continuity affects cache behavior
-- Semantics affect assembly
-- Everything interacts
+- Data layout affects vectorization.
+- Aliasing affects register reuse.
+- Function boundaries affect inlining.
+- Memory continuity affects cache behavior.
+- Semantics affect assembly.
+- Everything interacts.
 
-**Optimization is systemic**
+**Optimization is systemic.**
 
 You cannot isolate a single concept and expect to understand performance.
 The compiler, the ABI, the cache hierarchy, the execution ports, and your code structure are all part of the same machine.
@@ -954,4 +954,4 @@ The goal is to write code that the compiler and the hardware can execute with ma
 
 > Modern hardware is fast. But clarity is faster.
 
-# **And that is why this chapter exists**
+## **And that is why this chapter exists.**

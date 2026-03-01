@@ -1,4 +1,4 @@
-// Case 04 — Float point models
+// Case 04 - Float point models
 // Compiler: clang-cl (VS2026)
 // Standard: ISO C++23
 

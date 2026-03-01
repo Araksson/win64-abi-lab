@@ -1,4 +1,4 @@
-// Case 02 — Booleans
+// Case 02 - Booleans
 // Boolean representation experiment
 // Compiler: clang-cl (VS2026)
 // Standard: ISO C++23

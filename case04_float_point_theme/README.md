@@ -29,7 +29,7 @@ This chapter covers:
 - Float vs double vs long double behavior across platforms.
 - SIMD parameter passing with `XMVECTOR`.
 - Half-precision (16-bit) floating-point implementation in C++.
-- When half precision improves performance — and when it becomes catastrophic.
+- When half precision improves performance - and when it becomes catastrophic.
 
 ---
 
@@ -340,8 +340,8 @@ Half precision in these contexts leads to:
 
 ## Final Conclusion
 
-- Floating-point arithmetic is not “wrong” — it is finite.
-- Compiler settings are not cosmetic — they redefine mathematical behavior.
+- Floating-point arithmetic is not “wrong” - it is finite.
+- Compiler settings are not cosmetic - they redefine mathematical behavior.
 - Precision is a design decision.
 - Performance and determinism are often in tension.
 - Engineering consists in knowing where each belongs.

@@ -379,7 +379,7 @@ Fundamental Rule:
 
 If it is not, you have an ABI violation.
 
-And the program becomes undefined behavior — silently.
+And the program becomes undefined behavior - silently.
 
 ### Why does this matter?
 
@@ -520,7 +520,7 @@ C++ requires that a type have:
 
 **The linker does not always detect this.**
 
-**The program may run — incorrectly.**
+**The program may run - incorrectly.**
 
 ### ABI Stability Rule
 

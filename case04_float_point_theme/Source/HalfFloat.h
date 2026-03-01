@@ -248,7 +248,7 @@ public:
 		return *this;
 	}
 
-	//module — Integer part only
+	//module - Integer part only
 	template<typename Ty>
 	constexpr half operator%(Ty divisor) const noexcept
 	{

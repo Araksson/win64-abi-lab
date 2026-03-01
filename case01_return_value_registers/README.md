@@ -44,7 +44,7 @@ Under the Win64 ABI:
 | Compiler | `clang-cl` |
 | IDE | Visual Studio 2026 |
 | Standard | ISO C++23 |
-| Optimization Levels | `/O0`, `/O1`, `/O2` |
+| Optimization Levels | `-O0`, `-O1`, `-O2` |
 | Frame Pointer Omission | Disabled |
 | Debug Info | Full (`/Zi`) |
 
