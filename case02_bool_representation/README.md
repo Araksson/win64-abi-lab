@@ -25,23 +25,22 @@
 
 This case demonstrates:
 
-- The semantic differences between `BOOL` (WinAPI), `BOOLEAN` (WinNT), `_Bool` (C) and `bool` (C++)
-- How the Microsoft x64 ABI handles boolean returns
-- Why mixing APIs leads to subtle and frequent bugs
-- How to correctly test and normalize boolean values
-- A robust solution using an intermediate normalized type (BlBool)
+- The semantic differences between `BOOL` (WinAPI), `BOOLEAN` (WinNT), `_Bool` (C) and `bool` (C++).
+- How the Microsoft x64 ABI handles boolean returns.
+- Why mixing APIs leads to subtle and frequent bugs.
+- How to correctly test and normalize boolean values.
+- A robust solution using an intermediate normalized type (`BlBool`).
 
 ---
 
 ## The Fundamental Problem
 
-The system does not understand what a boolean is
-
+The system does not understand what a boolean is.
 At the ABI level:
 
 > A boolean is just an integer returned in EAX.
 
-The meaning (`true`/`false`) is purely a language-level abstraction
+The meaning (`true`/`false`) is purely a language-level abstraction.
 
 ---
 
@@ -56,8 +55,8 @@ The meaning (`true`/`false`) is purely a language-level abstraction
 
 ### Key difference:
 
-- `BOOL` and `BOOLEAN` can legally return -1 (0xFFFFFFFF and 0xFF respectively)
-- `bool` and `_Bool` are always normalized to 0 or 1
+- `BOOL` and `BOOLEAN` can legally return -1 (0xFFFFFFFF and 0xFF respectively).
+- `bool` and `_Bool` are always normalized to 0 or 1.
 
 ---
 
@@ -65,11 +64,11 @@ The meaning (`true`/`false`) is purely a language-level abstraction
 
 In Microsoft x64 calling convention:
 
-- Any integer ≤ 32 bits is returned in EAX
-- Writing to EAX zero-extends into RAX
+- Any integer ≤ 32 bits is returned in EAX.
+- Writing to EAX zero-extends into RAX.
 
-> The ABI does not encode “boolean-ness”
-> It only guarantees the return register
+> The ABI does not encode “boolean-ness”.
+> It only guarantees the return register.
 
 ---
 
@@ -94,13 +93,13 @@ ret
 
 Explanation:
 
-- setg al -> produces 0 or 1 in 8 bits
-- movzx eax, al -> zero-extends to 32 bits
-- Return contract satisfied
+- `setg al` -> produces 0 or 1 in 8 bits.
+- `movzx eax, al` -> zero-extends to 32 bits.
+- Return contract satisfied.
 
 ### **Important:**
 
-The compiler ensures normalization to a 32-bit value in EAX
+The compiler ensures normalization to a 32-bit value in `EAX`.
 
 ---
 
@@ -114,14 +113,13 @@ bool IsGreaterCpp(int a, int b)
 }
 ```
 
-Assembly is nearly identical
-
+Assembly is nearly identical.
 However:
 
-- The language guarantees only 0 or 1
-- You cannot store -1 in a bool
+- The language guarantees only 0 or 1.
+- You cannot store -1 in a `bool`.
 
-This is a semantic guarantee, not an ABI feature
+This is a semantic guarantee, not an ABI feature.
 
 ---
 
@@ -151,7 +149,7 @@ But:
 if (result)   // correct
 ```
 
-This is one of the most common WinAPI bugs
+This is one of the most common WinAPI bugs.
 
 ---
 
@@ -168,9 +166,8 @@ Now:
 if (winValue == cppValue)
 ```
 
-May fail depending on expectations
-
-The semantic model differs
+May fail depending on expectations.
+The semantic model differs.
 
 ---
 
@@ -185,8 +182,8 @@ ret
 
 If `EAX` was not cleared previously:
 
-- Upper bits may contain garbage
-- ABI contract is violated
+- Upper bits may contain garbage.
+- ABI contract is violated.
 
 ### Correct:
 
@@ -202,7 +199,7 @@ xor eax, eax
 ret
 ```
 
-**Explicit normalization is critical**
+**Explicit normalization is critical.**
 
 ---
 
@@ -220,7 +217,7 @@ if (value)
 if (value == TRUE)
 ```
 
-Unless you guarantee strict normalization
+Unless you guarantee strict normalization.
 
 ---
 
@@ -257,7 +254,7 @@ xor eax, eax
 ret
 ```
 
-**This makes behavior explicit and deterministic**
+**This makes behavior explicit and deterministic.**
 
 ---
 
@@ -276,14 +273,14 @@ struct alignas(4) BlBool
 };
 ```
 
-**For the complete definition of the BlBool structure, see Source/Main.cpp**
+**For the complete definition of the BlBool structure, see Source/Main.cpp.**
 
 This guarantees:
 
-- Stored value is always 0 or 1
-- Compatible with both C and C++
-- Safe for WinAPI interaction
-- Deterministic comparison behavior
+- Stored value is always 0 or 1.
+- Compatible with both C and C++.
+- Safe for WinAPI interaction.
+- Deterministic comparison behavior.
 
 ---
 
@@ -297,7 +294,7 @@ BlBool BL_IsGreater(int a, int b)
 }
 ```
 
-**What actually happens at the assembly level**
+**What actually happens at the assembly level.**
 
 The comparison:
 
@@ -306,7 +303,7 @@ cmp ecx, edx
 setg al
 ```
 
-Produces an 8-bit boolean result (0 or 1)
+Produces an 8-bit boolean result (0 or 1).
 
 Then the `BlBool(int)` constructor performs normalization:
 
@@ -341,32 +338,31 @@ xor eax, eax
 
 Instead, it:
 
-1. Tests the incoming value
-2. Re-normalizes it using setne
-3. Zero-extends the result into EAX
+1. Tests the incoming value.
+2. Re-normalizes it using setne.
+3. Zero-extends the result into `EAX`.
 
 The final guarantee is the same:
 
 - `EAX` = 0
 - or `EAX` = 1
 
-**But the mechanism is different**
+**But the mechanism is different.**
 
-The normalization is achieved by logical re-evaluation, not by hardcoding the return value
-
-The constructor guarantees that any non-zero input collapses to 1, ensuring consistent cross-API semantics while still respecting the ABI return contract
+The normalization is achieved by logical re-evaluation, not by hardcoding the return value.
+The constructor guarantees that any non-zero input collapses to 1, ensuring consistent cross-API semantics while still respecting the ABI return contract.
 
 ---
 
 ## Key Takeaways
 
-- The ABI does not know what a boolean is
-- BOOL and bool are semantically different
-- WinAPI uses “non-zero = TRUE”
-- C++ guarantees normalization
-- Comparing against TRUE can introduce bugs
-- Explicit normalization removes ambiguity
-- A wrapper type (like BlBool) eliminates cross-API hazards
+- The ABI does not know what a boolean is.
+- BOOL and bool are semantically different.
+- WinAPI uses “non-zero = TRUE”.
+- C++ guarantees normalization.
+- Comparing against TRUE can introduce bugs.
+- Explicit normalization removes ambiguity.
+- A wrapper type (like BlBool) eliminates cross-API hazards.
 
 ---
 
@@ -374,14 +370,12 @@ The constructor guarantees that any non-zero input collapses to 1, ensuring cons
 
 When mixing:
 
-- WinAPI
-- C
-- C++
+- WinAPI.
+- C.
+- C++.
 
-Do not rely on implicit semantics
-
-Normalize values at boundaries
-
+Do not rely on implicit semantics.
+Normalize values at boundaries.
 Avoid assuming:
 
 ```cpp
@@ -398,6 +392,6 @@ value = (value != 0);
 
 ## Final Insight
 
-- Boolean bugs are rarely syntax errors
-- They are semantic mismatches hidden behind ABI guarantees
-- Normalization is not optional in cross-layer systems code
+- Boolean bugs are rarely syntax errors.
+- They are semantic mismatches hidden behind ABI guarantees.
+- Normalization is not optional in cross-layer systems code.
