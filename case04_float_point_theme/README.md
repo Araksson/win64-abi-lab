@@ -1,9 +1,9 @@
-# Case 4 — Floating-Point Determinism, Compiler Flags and Precision Tradeoffs
+# Case 4 - Floating-Point Determinism, Compiler Flags and Precision Tradeoffs
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Visual Demonstration — Fast vs Strict](#visual-demonstration-fast-vs-strict)
+- [Visual Demonstration — Fast vs Strict](#visual-demonstration---fast-vs-strict)
 - [Why does this happen?](#why-does-this-happen)
 - [The Only Truly Stable Values](#the-only-truly-stable-values)
 - [float vs double vs long double](#float-vs-double-vs-long-double)
@@ -33,7 +33,7 @@ This chapter covers:
 
 ---
 
-## Visual Demonstration — Fast vs Strict
+## Visual Demonstration - Fast vs Strict
 
 Below is the exact same animation frame and zoom scale compiled under two different floating-point models.
 
