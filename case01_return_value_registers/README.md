@@ -1,4 +1,4 @@
-# Case 1 — Return Value Registers (Win64 ABI)
+# Case 1 - Return Value Registers (Win64 ABI)
 
 ## Table of Contents
 

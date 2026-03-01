@@ -1,4 +1,4 @@
-# Case 3 — Structure Layout, Padding, Alignment and ABI Semantics (Win64)
+# Case 3 - Structure Layout, Padding, Alignment and ABI Semantics (Win64)
 
 ## Table of Contents
 
