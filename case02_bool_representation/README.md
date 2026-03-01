@@ -38,7 +38,7 @@ This case demonstrates:
 The system does not understand what a boolean is.
 At the ABI level:
 
-> A boolean is just an integer returned in EAX.
+> A boolean is just an integer returned in `EAX`.
 
 The meaning (`true`/`false`) is purely a language-level abstraction.
 
@@ -48,14 +48,14 @@ The meaning (`true`/`false`) is purely a language-level abstraction.
 
 |   Type   |	Origin  |	Size    |	Semantic Guarantee   |
 |----------|------------|-----------|------------------------|
-|   BOOL    |   WinAPI  |	32-bit  |	0 = FALSE, !=0 = TRUE   |
-|   BOOLEAN    |   WinNT  |	8-bit  |	0 = FALSE, !=0 = TRUE   |
-|   _Bool    |   C99  |	8-bit  |	Always 0 or 1   |
-|   bool    |   C++  |	8-bit  |	Always 0 or 1   |
+|   `BOOL`    |   WinAPI  |	32-bit  |	0 = `FALSE`, !=0 = `TRUE`   |
+|   `BOOLEAN`    |   WinNT  |	8-bit  |	0 = `FALSE`, !=0 = `TRUE`   |
+|   `_Bool`    |   C99  |	8-bit  |	Always 0 or 1   |
+|   `bool`    |   C++  |	8-bit  |	Always 0 or 1   |
 
 ### Key difference:
 
-- `BOOL` and `BOOLEAN` can legally return -1 (0xFFFFFFFF and 0xFF respectively).
+- `BOOL` and `BOOLEAN` can legally return -1 (`0xFFFFFFFF` and `0xFF` respectively).
 - `bool` and `_Bool` are always normalized to 0 or 1.
 
 ---
@@ -64,10 +64,11 @@ The meaning (`true`/`false`) is purely a language-level abstraction.
 
 In Microsoft x64 calling convention:
 
-- Any integer ≤ 32 bits is returned in EAX.
-- Writing to EAX zero-extends into RAX.
+- Any integer ≤ 32 bits is returned in `EAX`.
+- Writing to EAX zero-extends into `RAX`.
 
 > The ABI does not encode “boolean-ness”.
+
 > It only guarantees the return register.
 
 ---
@@ -167,6 +168,7 @@ if (winValue == cppValue)
 ```
 
 May fail depending on expectations.
+
 The semantic model differs.
 
 ---
@@ -237,8 +239,8 @@ return condition ? 1 : 0;
 
 This guarantees:
 
-- EAX = 1 (TRUE)
-- or EAX = 0 (FALSE)
+- `EAX` = 1 (`TRUE`).
+- or `EAX` = 0 (`FALSE`).
 
 Which produces assembly like:
 
@@ -273,7 +275,7 @@ struct alignas(4) BlBool
 };
 ```
 
-**For the complete definition of the BlBool structure, see Source/Main.cpp.**
+**For the complete definition of the `BlBool` structure, see Source/Main.cpp.**
 
 This guarantees:
 
@@ -338,18 +340,19 @@ xor eax, eax
 
 Instead, it:
 
-1. Tests the incoming value.
-2. Re-normalizes it using setne.
-3. Zero-extends the result into `EAX`.
+- Tests the incoming value.
+- Re-normalizes it using setne.
+- Zero-extends the result into `EAX`.
 
 The final guarantee is the same:
 
-- `EAX` = 0
-- or `EAX` = 1
+- `EAX` = 0.
+- or `EAX` = 1.
 
 **But the mechanism is different.**
 
 The normalization is achieved by logical re-evaluation, not by hardcoding the return value.
+
 The constructor guarantees that any non-zero input collapses to 1, ensuring consistent cross-API semantics while still respecting the ABI return contract.
 
 ---
@@ -357,12 +360,12 @@ The constructor guarantees that any non-zero input collapses to 1, ensuring cons
 ## Key Takeaways
 
 - The ABI does not know what a boolean is.
-- BOOL and bool are semantically different.
-- WinAPI uses “non-zero = TRUE”.
+- `BOOL` and bool are semantically different.
+- WinAPI uses “non-zero = `TRUE`”.
 - C++ guarantees normalization.
-- Comparing against TRUE can introduce bugs.
+- Comparing against `TRUE` can introduce bugs.
 - Explicit normalization removes ambiguity.
-- A wrapper type (like BlBool) eliminates cross-API hazards.
+- A wrapper type (like `BlBool`) eliminates cross-API hazards.
 
 ---
 
