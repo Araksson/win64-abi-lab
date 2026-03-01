@@ -714,7 +714,7 @@ a[i] *= inv;
 
 > Instead, calculating the reciprocal (`1/B`) is more efficient (especially if it is constant, it is done at `compile time`), latencies are reduced to `3-5` CPU cycles, direct `MULSS` (`float`) or `MULSD` (`double`) operations are generated and 2 multiplications are performed per cycle
 
-**Here you can see one of the differences between the `/fp:precise` and `/fp:fast` optimizations**
+**Here you can see one of the differences between the `/fp:precise`/`/fp:strict` and `/fp:fast` optimizations**
 
 **Using `float` or `double` `A * 1 / B` gains a lot of speed but reduces precision because `1 / B` absorbs rounding with `/fp:fast`**
 
@@ -729,7 +729,7 @@ float div_float(float A, float B)
 ```
 
 ```asm
-divss xmm0, xmm1                      ;With /fp:precise
+divss xmm0, xmm1                      ;With /fp:precise or /fp:strict
 ret   
 ```
 
@@ -748,7 +748,7 @@ double div_double(double A, double B)
 ```
 
 ```asm
-divsd xmm0, xmm1                      ;With /fp:precise
+divsd xmm0, xmm1                      ;With /fp:precise or /fp:strict
 ret
 ```
 

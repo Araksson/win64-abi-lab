@@ -71,7 +71,7 @@ static void TestHalfFloat()
 }
 
 /*
-    The differences between using /fp:precise and /fp:fast are only visible in the context of
+    The differences between using /fp:precise or /fp:strict, and /fp:fast are only visible in the context of
     intensive value accumulation (such as matrix multiplication or multiple vector scaling). 
     However, the results shown in this module's README.md file are obtained on a custom
     platform that implements a 3D model with over ~150,000 vertices multiplied by 16 bones
