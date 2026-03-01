@@ -326,7 +326,7 @@ for (int i = 0; i < N; ++i)
 }
 ```
 
-### 'Whichever is Suitable` Version
+### 'Whichever is Suitable' Version
 
 `inline` applies a direct suggestion to the compiler:
 
@@ -395,7 +395,7 @@ May cause:
 
 **If passing parameters by value, ensure that it does not exceed the maximum size of 2 registers (maximum 16 bytes in x64), otherwise performance could be compromised.**
 
-**The only cases where this extends to a larger size are in the use of vectorized structures such as `XMVECTOR` or `XMMATRIX` that use `XMM` registers.**
+**The only cases where this extends to a larger size are in the use of vectorized structures such as `XMVECTOR` (sizeof 0x10) or `XMMATRIX` (sizeof 0x40) that use `XMM` registers.**
 
 ### Passing by Const Reference
 
@@ -409,7 +409,7 @@ Benefits:
 - Reduced stack usage.
 - Better register allocation.
 - It's a safe form and cannot be `nullptr`.
-- Access to the fields via `.`.
+- Access to the fields via `'.'`.
 
 **Use references `const &` or `&` for added security.**
 
@@ -438,7 +438,7 @@ Cautions:
 
 ## Aliasing
 
-### `const` and `__restrict`
+### `const` and `__restrict` case
 
 Aliasing prevents aggressive optimization.
 
@@ -489,7 +489,7 @@ In simple arrays, modern compilers usually optimize both equally.
 However, in:
 
 - Custom containers.
-- Overloaded operator[].
+- Overloaded `operator[]`.
 - Bounds-checked accessors.
 
 **Repeated index calculation may introduce overhead**
@@ -799,7 +799,7 @@ Ensures:
 
 > If the set of misaligned values of 16 or 32 bytes crosses 64-byte cache lines, two accesses are performed, and general performance is penalized.
 
-> For aligned instructions, `movaps` and `vmovaps` are used, and for misaligned instructions `movups` and `vmovups` are used (SIMD and AVX respectively).
+> For aligned instructions, `movaps` and `vmovaps` are used, and for misaligned instructions `movups` and `vmovups` are used (SSE2 and AVX respectively).
 
 | Operation | Aligned | Misaligned |
 | --------- | ------- | ---------- |
@@ -815,7 +815,7 @@ Ensures:
 - On modern hardware, there is no performance loss if the data is aligned, but gain safety against unexpected misalignments.
 - On older or `Atom` processors, `alignment` remains critical to avoid penalties.
 
-> It is recommended to search for alignments in critical hot paths. For example, in **memory allocators** search for alignments to 16-32-64 bytes; in **vertex operations** search for alignments to 16 bytes; in **local cache arrays** search for alignments to 16-32 bytes, and so on. **This will greatly help in SIMD operations.**
+> It is recommended to apply for alignments in critical hot paths. For example, in **memory allocators** apply for alignments to 16-32-64 bytes; in **vertex operations** apply for alignments to 16 bytes; in **local cache arrays** apply for alignments to 16-32 bytes, and so on. **This will greatly help in SIMD operations.**
 
 ---
 
