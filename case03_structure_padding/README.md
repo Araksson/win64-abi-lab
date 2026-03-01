@@ -1,8 +1,28 @@
 # Case 3 — Structure Layout, Padding, Alignment and ABI Semantics (Win64)
 
+## Table of Contents
+
+- [Objective](#objective)
+- [Structures Are Binary Layouts](#structures-are-binary-layouts)
+- [Natural Alignment (Win64)](#natural-alignment-win64)
+- [Padding Example](#padding-example)
+- [Member Order Changes Layout](#member-order-changes-layout)
+- [ABI Classification (Microsoft x64)](#abi-classification-microsoft-x64)
+- [Inheritance Layout](#inheritance-layout)
+- [Virtual Functions Insert Hidden State](#virtual-functions-insert-hidden-state)
+- [offsetof and Standard Layout](#offsetof-and-standard-layout)
+- [Detecting Padding (Compiler Warnings)](#detecting-padding-compiler-warnings)
+- [#pragma pack](#pragma-pack)
+- [alignas](#alignas)
+- [Key Insight](#key-insight)
+- [Header vs Source: Layout Consistency Across Translation Units](#header-vs-source-layout-consistency-across-translation-units)
+- [Conclusion](#conclusion)
+
+---
+
 ## Objective
 
-This case explores the physical memory representation of C++ structures under the Microsoft x64 ABI and Clang.
+This case explores the physical memory representation of C++ structures under the Microsoft x64 ABI and Clang
 
 We focus on:
 
@@ -18,8 +38,9 @@ We focus on:
 - alignas
 - Compiler diagnostics for layout issues
 
-**This is not conceptual C++.**
-**This is binary-level object representation.**
+**This is not conceptual C++**
+
+**This is binary-level object representation**
 
 ---
 
@@ -33,7 +54,7 @@ It is:
 - With compiler-inserted padding
 - Governed by ABI rules
 
-**The ABI defines how objects exist in memory and how they move across function boundaries.**
+**The ABI defines how objects exist in memory and how they move across function boundaries**
 
 ---
 
@@ -50,8 +71,8 @@ It is:
 
 ### Rules:
 
-- Each member is aligned to its natural alignment.
-- The structure size is rounded up to the largest alignment used by its members.
+- Each member is aligned to its natural alignment
+- The structure size is rounded up to the largest alignment used by its members
 
 ---
 
@@ -78,8 +99,9 @@ offset 0x8      : char c2
 offset 0x9-0xB : padding
 ```
 
-**Padding is not optional.**
-**It is required for correct alignment.**
+**Padding is not optional**
+
+**It is required for correct alignment**
 
 ---
 
@@ -96,10 +118,10 @@ struct B
 static_assert(sizeof(B) == 0x8);
 ```
 
-- Same members.
-- Different order.
-- Different total size.
-- Different ABI classification.
+- Same members
+- Different order
+- Different total size
+- Different ABI classification
 
 ---
 
@@ -107,9 +129,9 @@ static_assert(sizeof(B) == 0x8);
 
 Simplified rules:
 
-- 1, 2, 4, or 8-byte aggregates -> passed in registers.
-- Larger aggregates -> passed by reference (hidden pointer).
-- Alignment may influence classification.
+- 1, 2, 4, or 8-byte aggregates -> passed in registers
+- Larger aggregates -> passed by reference (hidden pointer)
+- Alignment may influence classification
 
 Changing member order may change:
 
@@ -117,7 +139,7 @@ Changing member order may change:
 - Stack layout
 - Generated assembly
 
-**Layout affects calling convention.**
+**Layout affects calling convention**
 
 ---
 
@@ -144,7 +166,7 @@ offset 0x0: Base::a
 offset 0x4: Derived::b
 ```
 
-**The base subobject is placed at offset 0x0.**
+**The base subobject is placed at offset 0x0**
 
 ---
 
@@ -173,7 +195,7 @@ Adding `virtual`:
 - Alters ABI classification
 - Makes the type non-standard-layout
 
-**Virtual functions are not free, they modify physical layout.**
+**Virtual functions are not free, they modify physical layout**
 
 ---
 
@@ -191,15 +213,15 @@ A type stops being standard-layout when it has:
 
 #### MSVC
 
-- Often allows `offsetof` even when technically non-standard.
-- May compile without error.
-- May produce non-portable assumptions.
+- Often allows `offsetof` even when technically non-standard
+- May compile without error
+- May produce non-portable assumptions
 
 #### Clang
 
-- Stricter enforcement.
-- Emits warnings or errors.
-- Respects standard-layout requirements more aggressively.
+- Stricter enforcement
+- Emits warnings or errors
+- Respects standard-layout requirements more aggressively
 
 If layout matters, use:
 
@@ -207,7 +229,7 @@ If layout matters, use:
 static_assert(std::is_standard_layout_v<T>);
 ```
 
-**Never assume portability otherwise.**
+**Never assume portability otherwise**
 
 ---
 
@@ -223,10 +245,10 @@ Use:
 
 This emits warnings when:
 
-- Internal padding is inserted.
-- Trailing padding is added.
+- Internal padding is inserted
+- Trailing padding is added
 
-**Extremely useful for ABI-sensitive code.**
+**Extremely useful for ABI-sensitive code**
 
 ### MSVC
 
@@ -249,7 +271,7 @@ Example:
 /d1reportSingleClassLayoutA
 ```
 
-**This prints the exact layout in compiler output, very powerful for ABI debugging.**
+**This prints the exact layout in compiler output, very powerful for ABI debugging**
 
 ---
 
@@ -295,14 +317,15 @@ Packing may cause:
 - Performance penalties
 - ABI incompatibility
 
-**Always localize packing with `push`/`pop`.**
-**Never apply globally.**
+**Always localize packing with `push`/`pop`**
+
+**Never apply globally**
 
 ---
 
 ## `alignas`
 
-Standard C++ alignment specifier.
+Standard C++ alignment specifier
 
 ```cpp
 struct alignas(16) Aligned
@@ -324,15 +347,15 @@ Used to:
 | `#pragma pack` | Reduces alignment           |
 | `alignas(X)`   | Enforces specific alignment |
 
-**`alignas` is portable and standard.**
-**`#pragma pack` is compiler-specific.**
+**`alignas` is portable and standard**
+
+**`#pragma pack` is compiler-specific**
 
 ---
 
 ## Key Insight
 
 Most structure-related bugs are not logic errors.
-
 They are:
 
 - Layout assumptions
@@ -341,18 +364,20 @@ They are:
 - ABI reclassification
 - Misaligned packing
 
-**If you reason only conceptually, you will debug illusions.**
-**If you reason physically, the bugs become obvious.**
+**If you reason only conceptually, you will debug illusions**
+
+**If you reason physically, the bugs become obvious**
 
 ---
 
 ## Header vs Source: Layout Consistency Across Translation Units
 
 Fundamental Rule
-> The structure layout must be identical in every translation unit.
+> The structure layout must be identical in every translation unit
 
-If it is not, you have an ABI violation.
-And the program becomes undefined behavior — silently.
+If it is not, you have an ABI violation
+
+And the program becomes undefined behavior — silently
 
 ### Why does this matter?
 
@@ -368,8 +393,9 @@ struct S
 };
 ```
 
-Every `.cpp` that includes this header must see exactly the same alignment context.
-If not, you have ODR + ABI breakage.
+Every `.cpp` that includes this header must see exactly the same alignment context
+
+If not, you have ODR + ABI breakage
 
 ### The Dangerous Scenario
 
@@ -390,7 +416,7 @@ Now:
 - In A.cpp -> `sizeof(S) == 0x5`
 - In B.cpp -> `sizeof(S) == 0x8`
 
-**The type is now physically different across translation units, this is catastrophic.**
+**The type is now physically different across translation units, this is catastrophic**
 
 Symptoms:
 
@@ -413,7 +439,7 @@ struct S
 };
 ```
 
-**If someone wraps the include with `#pragma pack(1)`, layout changes.**
+**If someone wraps the include with `#pragma pack(1)`, layout changes**
 
 ### Correct Defensive Pattern
 
@@ -431,8 +457,9 @@ struct PackedS
 #pragma pack(pop)
 ```
 
-**This localizes packing.**
-**Never leak packing state across headers.**
+**This localizes packing**
+
+**Never leak packing state across headers**
 
 ### `alignas` in Headers
 
@@ -448,12 +475,12 @@ struct alignas(16) S
 This must be in the header.
 If you forget `alignas` in the header but assume it elsewhere:
 
-- Layout changes.
-- ABI classification changes.
-- Stack alignment may break.
-- SIMD loads may fault.
+- Layout changes
+- ABI classification changes
+- Stack alignment may break
+- SIMD loads may fault
 
-**Alignment requirements must live with the type definition.**
+**Alignment requirements must live with the type definition**
 
 ### Virtual and Layout Drift
 
@@ -474,7 +501,7 @@ Otherwise:
 - vptr offset mismatches
 - Undefined behavior
 
-**This is why clean rebuilds are mandatory after layout changes.**
+**This is why clean rebuilds are mandatory after layout changes**
 
 ### ODR (One Definition Rule)
 
@@ -483,10 +510,13 @@ C++ requires that a type have:
 - Exactly one definition
 - Identical in all translation units
 
-**Violating layout consistency is an ODR violation.**
-**The compiler does not always detect this.**
-**The linker does not always detect this.**
-**The program may run — incorrectly.**
+**Violating layout consistency is an ODR violation**
+
+**The compiler does not always detect this**
+
+**The linker does not always detect this**
+
+**The program may run — incorrectly**
 
 ### ABI Stability Rule
 
@@ -509,7 +539,7 @@ Changing:
 - Changing alignment
 - Changing packing
 
-**Breaks binary compatibility.**
+**Breaks binary compatibility**
 
 ### Defensive Techniques
 
@@ -521,8 +551,9 @@ static_assert(alignof(S) == ExpectedAlignment);
 static_assert(std::is_standard_layout_v<S>);
 ```
 
-**Place these in headers if ABI matters.**
-**Fail early.**
+**Place these in headers if ABI matters**
+
+**Fail early**
 
 ### Clean Build Requirement
 
@@ -534,20 +565,22 @@ After modifying:
 - Alignment
 - Inheritance
 
-**You must perform a full rebuild.**
-**Incremental builds may retain object files compiled with old layout.**
-**This is a real-world source of subtle crashes.**
+**You must perform a full rebuild**
+
+**Incremental builds may retain object files compiled with old layout**
+
+**This is a real-world source of subtle crashes**
 
 ### Practical Rule
 
 If a structure is layout-sensitive:
 
-- Define it fully in the header.
-- Control packing locally.
-- Use `alignas` explicitly if required.
-- Avoid implicit alignment assumptions.
-- Enforce `static_assert` checks.
-- Always clean rebuild after modification.
+- Define it fully in the header
+- Control packing locally
+- Use `alignas` explicitly if required
+- Avoid implicit alignment assumptions
+- Enforce `static_assert` checks
+- Always clean rebuild after modification
 
 ---
 
@@ -557,12 +590,14 @@ Structure layout is not just a compile-time detail.
 
 It is:
 
-- A cross-module binary contract.
-- An ABI surface.
-- A memory law enforced by the compiler.
+- A cross-module binary contract
+- An ABI surface
+- A memory law enforced by the compiler
 
-**If alignment differs in one translation unit, the entire program becomes physically inconsistent.**
-**This is not a stylistic concern.**
-**It is a binary integrity issue.**
+**If alignment differs in one translation unit, the entire program becomes physically inconsistent**
 
-All the examples can be seen in the Source/main.cpp file.
+**This is not a stylistic concern**
+
+**It is a binary integrity issue**
+
+All the examples can be seen in the Source/main.cpp file

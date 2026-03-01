@@ -1,5 +1,19 @@
 # Case 4 — Floating-Point Determinism, Compiler Flags and Precision Tradeoffs
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Visual Demonstration — Fast vs Strict](#visual-demonstration-fast-vs-strict)
+- [Why does this happen?](#why-does-this-happen)
+- [The Only Truly Stable Values](#the-only-truly-stable-values)
+- [float vs double vs long double](#float-vs-double-vs-long-double)
+- [SIMD and Parameter Passing (DirectXMath Case)](#simd-and-parameter-passing-directxmath-case)
+- [Half Precision (binary16)](#half-precision-binary16)
+- [Engineering Takeaways](#engineering-takeaways)
+- [Final Conclusion](#final-conclusion)
+
+---
+
 ## Overview
 
 This case explores one of the most underestimated sources of instability in real-time systems:
@@ -290,7 +304,7 @@ Benefits:
 - Improved cache locality
 - Higher vertex throughput
 
-**In large meshes, this can significantly reduce pipeline pressure.**
+**In large meshes, this can significantly reduce pipeline pressure**
 
 ### When Half Precision Is Dangerous
 
@@ -313,20 +327,20 @@ Half precision in these contexts leads to:
 
 ## Engineering Takeaways
 
-1) Floating-point is deterministic within a single compiled binary.
-2) It is not guaranteed deterministic across compilers.
-3) Optimization flags change arithmetic semantics.
-4) Animation systems amplify rounding error.
-5) Half precision is a storage optimization, not a computation precision tool.
-6) Double precision should be used for accumulation-heavy systems.
-7) Always test animation under strict floating-point settings.
+- Floating-point is deterministic within a single compiled binary
+- It is not guaranteed deterministic across compilers
+- Optimization flags change arithmetic semantics
+- Animation systems amplify rounding error
+- Half precision is a storage optimization, not a computation precision tool
+- Double precision should be used for accumulation-heavy systems
+- Always test animation under strict floating-point settings
 
 ---
 
 ## Final Conclusion
 
-- Floating-point arithmetic is not “wrong” — it is finite.
-- Compiler settings are not cosmetic — they redefine mathematical behavior.
-- Precision is a design decision.
-- Performance and determinism are often in tension.
-- Engineering consists in knowing where each belongs.
+- Floating-point arithmetic is not “wrong” — it is finite
+- Compiler settings are not cosmetic — they redefine mathematical behavior
+- Precision is a design decision
+- Performance and determinism are often in tension
+- Engineering consists in knowing where each belongs

@@ -1,5 +1,24 @@
 # Case 5 — SIMD, SSE2, AVX and Architectural Discipline
 
+## Table of Contents
+
+- [Overview](#overview)
+- [What SIMD Actually Is](#what-simd-actually-is)
+- [Scalar vs SSE2 vs AVX — Practical Example](#scalar-vs-sse2-vs-avx-practical-example)
+- [The Hidden Problem — VEX Encoding Appearing Unexpectedly](#the-hidden-problem-vex-encoding-appearing-unexpectedly)
+- [SSE Domain vs AVX Domain](#sse-domain-vs-avx-domain)
+- [Domain Transition and vzeroupper](#domain-transition-and-vzeroupper)
+- [Why is it important to isolate AVX code?](#why-is-it-important-to-isolate-avx-code)
+- [AoS vs SoA — Data Layout Is Critical](#aos-vs-soa-data-layout-is-critical)
+- [Auto-Vectorization vs Manual Intrinsics](#auto-vectorization-vs-manual-intrinsics)
+- [Runtime SIMD Detection (CPUID)](#runtime-simd-detection-cpuid)
+- [Hardware vs Software SIMD](#hardware-vs-software-simd)
+- [Benchmarking Discipline](#benchmarking-discipline)
+- [Engineering Takeaways](#engineering-takeaways)
+- [Final Conclusion](#final-conclusion)
+
+---
+
 ## Overview
 
 This case explores real-world SIMD usage beyond simple intrinsics.
@@ -14,7 +33,7 @@ It covers:
 - Runtime SIMD detection via CPUID
 - Why isolating AVX code is critical in legacy systems
 
-**This case is based on practical investigation: inspecting generated assembly, identifying unintended AVX encodings inside SSE2 paths, and restructuring the codebase to prevent cross-domain contamination.**
+**This case is based on practical investigation: inspecting generated assembly, identifying unintended AVX encodings inside SSE2 paths, and restructuring the codebase to prevent cross-domain contamination**
 
 ---
 
@@ -45,8 +64,7 @@ AVX (256-bit, YMM registers):
 
 Important:
 
-> SIMD does not reduce algorithmic complexity.
-It increases data throughput per instruction.
+> SIMD does not reduce algorithmic complexity. It increases data throughput per instruction
 
 ---
 
@@ -81,7 +99,7 @@ void AddSSE2(float* a, float* b, float* out, int count)
 }
 ```
 
-Typical assembly (legacy SSE encoding):
+Typical Assembly (legacy SSE encoding):
 
 ```asm
 movaps xmm0, xmmword ptr [rcx]
@@ -106,7 +124,7 @@ void AddAVX(float* a, float* b, float* out, int count)
 }
 ```
 
-Typical assembly (VEX encoded):
+Typical Assembly (VEX encoded):
 
 ```asm
 vmovaps ymm0, ymmword ptr [rcx]
@@ -125,7 +143,7 @@ vmovaps xmm0, xmmword ptr [rcx]
 vaddps  xmm0, xmm0, xmmword ptr [rdx]
 ```
 
-**Even though the register is XMM, the encoding is AVX (VEX).**
+**Even though the register is XMM, the encoding is AVX (VEX)**
 
 This has consequences:
 
@@ -134,7 +152,7 @@ This has consequences:
 - May introduce transition penalties
 - Affects legacy SSE2-only code paths
 
-This was discovered through direct assembly inspection.
+This was discovered through direct assembly inspection
 
 ---
 
@@ -154,11 +172,11 @@ vmovaps xmm0, xmm1
 vaddps  xmm0, xmm1, xmm2
 ```
 
-Even if using 128-bit registers, VEX encoding switches the execution domain.
+Even if using 128-bit registers, VEX encoding switches the execution domain
 
 ---
 
-## Domain Transition and vzeroupper
+## Domain Transition and `vzeroupper`
 
 Mixing legacy SSE and AVX instructions historically required:
 
@@ -204,8 +222,9 @@ Expose only a unified interface:
  void Add(float* a, float* b, float* out, int count);
  ```
 
-**The rest of the engine never mixes domains.**
-**This prevents cross-contamination.**
+**The rest of the engine never mixes domains**
+
+**This prevents cross-contamination**
 
 ---
 
@@ -254,9 +273,9 @@ Ideal for:
 - Cache line utilization
 - Prefetch efficiency
 
-**SIMD performance depends more on layout than instruction width.**
+**SIMD performance depends more on layout than instruction width**
 
-> The choice depends on the use: SoA for **vector calculations** and **partial access**, AoS for **full access** and **readability**.
+> The choice depends on the use: SoA for **vector calculations** and **partial access**, AoS for **full access** and **readability**
 
 ## Example - This is the behavior of the structures:
 
@@ -299,7 +318,7 @@ This is SIMD-optimal for operations like:
 - Dot products across vertices
 - Batch transforms
 
-**No shuffles required.**
+**No shuffles required**
 
 ### AoS Layout (1 vertex * 3)
 
@@ -330,7 +349,7 @@ movups xmm1, [rcx+16]     ; y1 z1 x2 y2
 movups xmm2, [rcx+32]     ; z2 ?? ?? ??
 ```
 
-**This is garbage for SIMD math.**
+**This is garbage for SIMD math**
 
 To extract X components you must:
 
@@ -347,7 +366,7 @@ You need:
 - More uops
 - More register pressure
 
-**That’s the real cost.**
+**That’s the real cost**
 
 ### The Real Difference (Instruction-Level View)
 
@@ -375,7 +394,7 @@ The real difference lies in:
 - Dependency chains
 - Reduced ILP (Incremental Level of Parallelism)
 
-**That is what truly makes SoA superior for SIMD.**
+**That is what truly makes SoA superior for SIMD**
 
 | Data regime     | Winner            |
 | ----------- | --------------- |
@@ -405,7 +424,7 @@ vaddps ymm0, ymm1, ymm2
 
 Meaning:
 
-> The compiler can already vectorize simple loops.
+> The compiler can already vectorize simple loops
 
 Manual intrinsics are justified when:
 
@@ -418,7 +437,7 @@ Manual intrinsics are justified when:
 
 ## Runtime SIMD Detection (CPUID)
 
-Important for legacy compatibility.
+Important for legacy compatibility
 
 SSE2 detection:
 
@@ -484,7 +503,7 @@ else
 }
 ```
 
-**This decision should be made once at startup.**
+**This decision should be made once at startup**
 
 ---
 
@@ -502,7 +521,7 @@ If the bottleneck is:
 - Memory bandwidth
 - Poor data layout
 
-**Wider registers will not help.**
+**Wider registers will not help**
 
 ---
 
@@ -527,18 +546,18 @@ alignas(32) float data[1024];
 
 ## Engineering Takeaways
 
-- SIMD performance depends more on data layout than instruction width.
-- AVX should be isolated to avoid domain contamination.
-- Global `/arch:AVX2` can silently alter legacy code behavior.
-- Runtime detection ensures compatibility.
-- Assembly inspection is sometimes necessary to understand compiler output.
-- Not all CPUs support AVX, especially legacy systems.
+- SIMD performance depends more on data layout than instruction width
+- AVX should be isolated to avoid domain contamination
+- Global `/arch:AVX2` can silently alter legacy code behavior
+- Runtime detection ensures compatibility
+- Assembly inspection is sometimes necessary to understand compiler output
+- Not all CPUs support AVX, especially legacy systems
 
 ---
 
 ## Final Conclusion
 
-SIMD is not just about intrinsics.
+SIMD is not just about intrinsics
 
 It is about:
 
@@ -548,6 +567,7 @@ It is about:
 - Controlled compilation flags
 - Informed benchmarking
 
-**Blindly enabling AVX can degrade legacy paths.**
-**Isolating SIMD implementations provides clarity, control, and predictable performance.**
+**Blindly enabling AVX can degrade legacy paths**
+
+**Isolating SIMD implementations provides clarity, control, and predictable performance**
 
