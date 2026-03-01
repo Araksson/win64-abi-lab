@@ -33,9 +33,9 @@ We focus on:
 - Structure passing rules.
 - Inheritance layout.
 - Virtual table side effects.
-- offsetof restrictions.
-- #pragma pack.
-- alignas.
+- `offsetof` restrictions.
+- `#pragma pack`.
+- `alignas`.
 - Compiler diagnostics for layout issues.
 
 **This is not conceptual C++.**
@@ -604,4 +604,4 @@ It is:
 
 **It is a binary integrity issue.**
 
-All the examples can be seen in the Source/main.cpp file.
+> All the examples can be seen in the Source/main.cpp file.
