@@ -3,7 +3,6 @@
 #include <vector>
 #include "VertexStruct.h"
 #include "Simd/simd_dispatch.h"
-#include <chrono>
 #include <iostream>
 
 //CPUID SSE2 and AVX
