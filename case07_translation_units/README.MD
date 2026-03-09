@@ -350,7 +350,7 @@ Focus:
 Some useful guidelines:
 
 - Headers should expose interfaces, not implementation.
-> Except in specific situations (`templates`, `wrappers`, etc, that must be `inline` in 100% of cases), never implement everything in the `.h` file.
+> Except in specific situations (`templates`, `wrappers`, etc, that must be `inline` in ~90% of cases), never implement everything in the `.h` file.
 
 - Avoid unnecessary includes in headers.
 > The reference to the external structure can be created in a `.h` file without the need to use `#include` to avoid unnecessary references.
@@ -398,5 +398,9 @@ namespace MyNameSpace
 ```
 
 In this way, the referenced structure can be used correctly when linked, and (in the case of `.h` files) adding an `#include` directive is avoided.
+
+Special care must be taken when declaring `mutable global variables` in `.h` files, as they are copied to every `.cpp` file.
+
+For `immutable global variables` or `constexpr`, the opposite is true, if they need to be reused in multiple `.cpp` files, placing them in `.h` is **ideal**.
 
 > Don't forget to modularize when necessary. Read [case 6](../case06_semantic_optimization/) to fully understand why so much emphasis is placed on `mixed` use.
