@@ -220,7 +220,7 @@ float Add(float a, float b)
 }
 ```
 
-> Having multiple `.cpp` files makes code modularization more efficient. It improves organization, and modifying a small part of the code only requires recompiling that single module; you don't have to recompile the entire project (it seems obvious, but sometimes this behavior can cause `undefined behavior` in other modules that call it, which is why when exporting functions from `.cpp` to `.h`, you must define them very well to prevent potential problems. See [case 2](case02_bool_representation/) and [case 6](case06_semantic_optimization/). This last point does not apply in the case of [Single Translation Unit](#the-single-translation-unit-approach)).
+> Having multiple `.cpp` files makes code modularization more efficient. It improves organization, and modifying a small part of the code only requires recompiling that single module; you don't have to recompile the entire project (it seems obvious, but sometimes this behavior can cause `undefined behavior` in other modules that call it, which is why when exporting functions from `.cpp` to `.h`, you must define them very well to prevent potential problems. See [case 2](../case02_bool_representation/) and [case 6](../case06_semantic_optimization/). This last point does not apply in the case of [Single Translation Unit](#the-single-translation-unit-approach)).
 
 ---
 
@@ -399,4 +399,4 @@ namespace MyNameSpace
 
 In this way, the referenced structure can be used correctly when linked, and (in the case of `.h` files) adding an `#include` directive is avoided.
 
-> Don't forget to modularize when necessary. Read [case 6](case06_semantic_optimization/) to fully understand why so much emphasis is placed on `mixed` use.
+> Don't forget to modularize when necessary. Read [case 6](../case06_semantic_optimization/) to fully understand why so much emphasis is placed on `mixed` use.
