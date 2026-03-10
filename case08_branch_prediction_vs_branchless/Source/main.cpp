@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <chrono>
 #include <random>
 #include "Benchmark.h"
 
