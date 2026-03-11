@@ -392,10 +392,10 @@ Branchless programming is not a universal optimization.
 
 Before replacing a branch, consider:
 
-- branch predictability
-- cost of instructions in each path
-- possibility of inlining
-- surrounding workload
+- Branch predictability.
+- Cost of instructions in each path.
+- Possibility of inlining.
+- Surrounding workload.
 
 In many real-world hot paths, a well-predicted branch is faster than a branchless alternative.
 
