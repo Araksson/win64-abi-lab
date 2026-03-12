@@ -72,7 +72,7 @@ The experiment defines multiple return functions with different return types and
 
 ### Inlining and Return Materialization
 
-When all functions were in a single translation unit with optimization (O1/O2), the compiler inlined the functions, and returns collapsed into single instruction sequences, often using the base return register (RAX). This obscured the calling ABI behavior.
+When all functions were in a single translation unit with optimization (O1/O2), the compiler inlines the functions, and returns collapsed into single instruction sequences, often using the base return register (RAX). This obscured the calling ABI behavior.
 
 To observe true ABI register materialization, functions were placed in separate translation units and marked `[[clang::noinline]]` to prevent inlining and constant propagation.
 

@@ -382,13 +382,13 @@ Normalize values at boundaries.
 Avoid assuming:
 
 ```cpp
-TRUE == 1
+value == 1 --> TRUE
 ```
 
 Instead, enforce:
 
 ```cpp
-value = (value != 0);
+(value != 0) --> TRUE
 ```
 
 ---
