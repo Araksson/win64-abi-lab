@@ -27,6 +27,7 @@ This case explores the often-overlooked performance impact of:
 - [Prefix vs Postfix](#x-prefix-vs-x-postfix)
 - [Recursion vs Iteration](#recursion-vs-iteration)
 - [Arithmetic Micro-Optimizations](#arithmetic-micro-optimizations)
+- [Use of the literal final](#use-of-the-literal-final)
 - [Alignment Considerations](#alignment-considerations)
 - [Debug Overhead and Assertions](#debug-overhead-and-assertions)
 - [Templates vs Type Erasure](#templates-vs-type-erasure)
@@ -775,6 +776,55 @@ shr rax, 35                         ;rax = (A * 0xCCCCCCCD) >> 35
 ```
 
 **The compiler usually detects these cases and implements them automatically, when the appropriate optimization is applied.**
+
+---
+
+## Use of the literal 'final'
+
+### Literal `final` as optimization when using virtual functions in `struct` and `class`
+
+The literal `final` in C++ helps the compiler perform optimizations because it indicates that a class or method will not be inherited or overridden. This allows the compiler to:
+
+- Avoid unnecessary vtables: If a class or struct marked `final` has virtual functions, the compiler can determine that there will be no derived implementations, so it can:
+    -   Convert virtual calls into direct calls (devirtualization).
+    -   Remove the vtable in some cases.
+ 
+- Apply more aggressive optimizations: Knowing that the function's behavior will not change in derived classes, the compiler can:
+  - Apply inlining more efficiently.
+  - Perform dead code removal or constant propagation.
+  
+- Improve runtime performance: Fewer indirections and virtual calls translate into faster code.
+
+```cpp
+class Base final
+{
+public:
+    virtual void foo() { /* ... */ }
+};
+
+void call(Base& obj)
+{
+    obj.foo(); // The compiler can inline here
+}   
+```
+
+```cpp
+class BaseClass final
+{
+    // ...
+};
+
+class DerivedClass : public BaseClass // Compile error: BaseClass is final
+{
+    // ...
+};   
+```
+
+Without `final`, the compiler must assume that `foo()` could be `overridden` in a derived class, forcing a `virtual` call. With final, you can optimize this call.
+
+> Generally it is indicated in the optimization that the use of `virtual` functions be avoided, but if it is a structure with the literal `final` the compiler can optimize without including the vtable (favoring the use of `offsets` and debugging), and eliminates calls (applying `inline` when necessary). This can be especially useful when dealing with a very delicate structure within the code and if it carries `virtual` functions that should not be `overridden`.
+
+> Personally, I rarely use the `final` literal, but if `virtual` or inheritance is used a lot, consider using said literal to optimize the code when working on the structure.
 
 ---
 
