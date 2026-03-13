@@ -820,7 +820,7 @@ class DerivedClass : public BaseClass // Compile error: BaseClass is final
 };   
 ```
 
-Without `final`, the compiler must assume that `foo()` could be `overridden` in a derived class, forcing a `virtual` call. With final, you can optimize this call.
+Without `final`, the compiler must assume that `foo()` could be `overridden` in a derived class, forcing a `virtual` call. With `final` you can optimize this call.
 
 > Generally it is indicated in the optimization that the use of `virtual` functions be avoided, but if it is a structure with the literal `final` the compiler can optimize without including the vtable (favoring the use of `offsets` and debugging), and eliminates calls (applying `inline` when necessary). This can be especially useful when dealing with a very delicate structure within the code and if it carries `virtual` functions that should not be `overridden`.
 
