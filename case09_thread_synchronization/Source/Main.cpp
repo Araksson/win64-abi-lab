@@ -96,7 +96,7 @@ static void WorkerTLS(int nIterations)
     False Sharing case
 */
 
-constexpr size_t CACHE_LINE_SIZE = 64;
+constexpr size_t CACHE_LINE_SIZE = std::hardware_destructive_interference_size;
 
 /*
     Note that the structure has multiple std::atomic values on

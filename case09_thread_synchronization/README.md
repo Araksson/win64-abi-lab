@@ -623,6 +623,15 @@ NoSharing: 4 ms
 ```
 > This shows that here, in this particular case, **architecture is what guides**.
 
+NOTE: In case this is modified in the future, consider using `std::hardware_destructive_interference_size` as a parameter to alignas(X), it is a global variable that returns the exact size of a cache line (normally it is 64 bytes in L1, but it could vary in the future).
+If it is not available, you can use the following code to enable it:
+
+```cpp
+#ifndef __cpp_lib_hardware_interference_size
+constexpr std::size_t hardware_destructive_interference_size = 64;
+#endif   
+```
+
 ---
 
 ## Practical Takeaway
