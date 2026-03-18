@@ -4,7 +4,7 @@
 
 - [Objective](#objective)
 - [Background](#background)
-- [CRITICAL_SECTION characteristics](#critical-section-characteristics)
+- [CRITICAL_SECTION characteristics](#criticalsection-characteristics)
 - [SRWLock Characteristics](#srwlock-characteristics)
 - [Raw Lock/Unlock Cost](#raw-lockunlock-cost)
 - [Contention](#contention)
