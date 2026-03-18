@@ -14,6 +14,7 @@
 - [Atomic Operations](#atomic-operations)
 - [Cache Line](#cache-line)
 - [Practical Takeaway](#practical-takeaway)
+- [Notes on Thread creation](#notes-on-thread-creation)
 
 ---
 
@@ -715,3 +716,34 @@ RET
 ```
 
 Both ASM codes are exactly the same, but in the first case it is safe and in the second case it is potentially dangerous (both for the variable declaration and for "forgetting" to do the Leave section)
+
+---
+
+## Notes on Thread creation
+
+In the examples, the `<thread>` library was used to generate threads using `std::thread` and its implicit constructor when pushing an element to the `std::vector`.
+
+```cpp
+std::vector<std::thread> vWorkers;
+for (int i = 0; i < N; ++i)
+{
+    vWorkers.emplace_back(fpFN, ...);//Initialize the constructor of each Thread and begin its execution
+}
+
+for (auto& Thread : vWorkers)
+{
+    Thread.join();//Here, the main thread waits for all other threads to finish before continuing its execution.
+}
+```
+
+Perhaps you could explore other equally direct but explicit solutions, such as the Win32 API's `CreateThread` function. This function offers more user control (at least directly) through flags and numerous parameters. While more limited by the nature of their callback, these solutions can yield interesting results, but they are more powerful due to their direct ability to modify the thread's behavior upon creation.
+
+> You should be aware that the use of Win32 API functions is not portable to other operating systems, and requires greater control to avoid memory leaks.
+
+In cases where you need absolute control, you can use `CreateThread` or its lower-level version `NtCreateThreadEx`, but you must take into account the correct release of resources and that the use to be given to it is perfectly controlled.
+
+> In my projects I implemented custom versions of `std::thread` using `NtCreateThreadEx` with resource control and closure events, because it is possible to control exactly which CPU Core can run that logical Thread and you can add more controls over StackSize (it is even possible to create the Stack in special sectors of the system if necessary).
+
+If you simply want a basic multithreaded environment that doesn't require extensive modification or control (which is often unnecessary), consider using only `std::thread` (RTL). It's portable, secure, doesn't require advanced technical knowledge to configure, and provides a safe and optimized interface for reusing threads if they are prematurely terminated or if many short processes are run concurrently. Furthermore, it allows for callbacks with variable parameters and Lambda functions, making it quite suitable for general system use.
+
+You can read more about `std::thread` [here](https://en.cppreference.com/w/cpp/thread/thread.html), about CreateThread [here](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread), and about NtCreateThreadEx [here](https://ntdoc.m417z.com/ntcreatethreadex).
