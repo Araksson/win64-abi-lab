@@ -363,11 +363,11 @@ Additionally, merging `thread_local` values into a global result still requires 
 
 A thread_local in ASM looks like this:
 ```asm
-mov rax, gs:[0x58]        ; Pointer to TLS array
-mov ecx, _tls_index       ; Module Index
-mov rbx, [rax + rcx*8]    ; rbx = pointer to the TLS block of the module
+MOV RAX, GS:[0x58]              ; Pointer to TLS array
+MOV ECX, _tls_index             ; Module Index
+MOV RBX, [RAX + RCX * 8]        ; RBX = pointer to the TLS block of the module
 ...
-mov eax, [rbx + tls_offset]  ; tls_offset is fixed, calculated by the linker 
+MOV EAX, [RBX + tls_offset]     ; tls_offset is fixed, calculated by the linker 
 ```
 
 - All `thread_local` variables within the same module use the same `_tls_index`.
