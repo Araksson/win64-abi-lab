@@ -372,7 +372,7 @@ MOV EAX, [RBX + tls_offset]     ; tls_offset is fixed, calculated by the linker
 
 - All `thread_local` variables within the same module use the same `_tls_index`.
 - Each variable has a fixed offset within the module's `.tls block`.
-- The final access method is: `GS[0x58] + _tls_index*8` gives the block, and then the internal offset is added.
+- The final access method is: `GS[0x58] + _tls_index * 8` gives the block, and then the internal offset is added.
 
 > This generates a small overhead at the beginning/end of each thread due to the initialization of variables in `GS[0x58]`.
 
@@ -498,7 +498,7 @@ std::atomic<int> nCounter = 0;
 A cache line is the smallest unit of memory that the CPU moves between:
 
 - RAM <-> Cache
-- Cache <-> other cores
+- Cache <-> Other Threads
 
 In modern CPUs (x86), typically:
 
