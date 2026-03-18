@@ -4,7 +4,7 @@
 
 - [Objective](#objective)
 - [Background](#background)
-- [CRITICAL_SECTION characteristics](#criticalsection)
+- [CRITICAL_SECTION characteristics](#critical-section-characteristics)
 - [SRWLock Characteristics](#srwlock-characteristics)
 - [Raw Lock/Unlock Cost](#raw-lockunlock-cost)
 - [Contention](#contention)
@@ -56,7 +56,7 @@ It is used to declare variables with local storage per thread. This means that e
 
 ---
 
-## CRITICAL_SECTION characteristics {#criticalsection}
+## CRITICAL_SECTION characteristics
 
 CRITICAL_SECTION provides:
 
