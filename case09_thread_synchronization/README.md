@@ -10,7 +10,7 @@
 - [Contention](#contention)
 - [Lock Scope Design](#lock-scope-design)
 - [RAII Safety Wrappers](#raii-safety-wrappers)
-- [`thread_local` Storage](#threadlocal)
+- [`thread_local` Storage](#user-content-threadlocal)
 - [Atomic Operations](#atomic-operations)
 - [Cache Line](#cache-line)
 - [Practical Takeaway](#practical-takeaway)
@@ -284,7 +284,7 @@ If you want to use dynamic memory for initializing the structure (such as `CRITI
 
 ---
 
-## `thread_local` Storage {#threadlocal}
+## `thread_local` Storage <a id="user-content-threadlocal"></a>
 
 Another technique to reduce synchronization overhead is the use of thread-local storage.
 

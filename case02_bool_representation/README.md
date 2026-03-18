@@ -13,7 +13,7 @@
 - [Register-Level Danger (Manual ASM)](#register-level-danger-manual-asm)
 - [Testing Values Correctly](#testing-values-correctly)
 - [Forcing Normalization](#forcing-normalization)
-- [The Structural Solution - BlBool](#blboolintro)
+- [The Structural Solution - BlBool](#user-content-blbool)
 - [Normalized Return Example](#normalized-return-example)
 - [Key Takeaways](#key-takeaways)
 - [Practical Recommendation](#practical-recommendation)
@@ -260,7 +260,7 @@ ret
 
 ---
 
-## The Structural Solution - BlBool {#blboolintro}
+## The Structural Solution - BlBool <a id="user-content-blbool"></a>
 
 To eliminate semantic mismatch, we introduce a normalized boolean wrapper:
 
