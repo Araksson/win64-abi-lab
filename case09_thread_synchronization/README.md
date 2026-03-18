@@ -54,6 +54,11 @@ Modern compilers (GCC 4.8+, Clang 3.3+, MSVC 2015+) support it on systems such a
 
 It is used to declare variables with local storage per thread. This means that each thread has its own independent copy of the variable, and it is not shared with other threads.
 
+### std::atomic
+Type allows safe concurrent access to a variable without using explicit locks (C++11).
+
+**But precautions should be taken when using it.**
+
 ---
 
 ## CRITICAL_SECTION characteristics <a id="user-content-criticalsection"></a>
