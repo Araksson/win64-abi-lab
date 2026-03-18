@@ -647,17 +647,19 @@ In performance-sensitive systems:
 
 **If everything is done with a single thread, the execution time of these synchronization methods is exactly the same.**
 
-**If you work with more than one thread (the purpose of these structures), you will get the following result in velocity: `thread_local` >> `std::atomic` >> locks.**
+**If you work with more than one thread (the purpose of these structures), you will get the following result in velocity:**
+
+`thread_local` >> `std::atomic` >> locks.
 
 > When working with multiple variables and behaviors shared between threads using `std::atomic`, consider using `alignas(64)` for shared data to avoid `false sharing` issues. Although it wastes space, the performance difference is significant. If there is more than one consecutive shared atomic variable, performance can be considerably compromised if they share the same cache line.
 
-> There are other LockSafe systems in `std::`, such as `std::unique_lock` and `std::lock_guard`, both use `std::mutex` as their synchronization method, but in my experience they were not clear enough and so far `SRWLOCK`, `CRITICAL_SECTION` and `thread_local` have solved 100% of the synchronization problems I work with.
+> There are other LockSafe systems in `std::`, such as `std::unique_lock` and `std::lock_guard`, both use `std::mutex` as their synchronization method, but in my experience they were not clear enough and so far `SRWLOCK`, `CRITICAL_SECTION`, `thread_local` and `std::atomic` have solved 100% of the synchronization problems I work with.
 
 If you'd like to learn more about using `std::mutex`, `std::unique_lock`, and `std::lock_guard`, you can check out the following [article](https://en.cppreference.com/w/cpp/thread/lock_guard.html), and this [article](https://en.cppreference.com/w/cpp/thread/unique_lock.html).
 
 > `std::mutex` is cross-platform portable, but in Windows 7+ it is implemented at a low level through the internal use of `SRWLOCK`. RTL recommends using it over `CRITICAL_SECTION` and `SRWLOCK` in modern software (due to its portability and security, among other things), but with the LockSafe structures (I just presented) its use is practically the same as `CRITICAL_SECTION` or `SRWLOCK` and it has the same security on Windows.
 
-> I want to clarify that using `CRITICAL_SECTION`, `SRWLOCK`, and `thread_local` has worked for me, and I understood them perfectly. This doesn't mean that using `std::mutex` is "*superior or inferior*" in my experience; on the contrary, it's possible that in certain scenarios, `std::mutex` might be more efficient and others that are less efficient.
+> I want to clarify that using `CRITICAL_SECTION`, `SRWLOCK`, `thread_local`, and `std::atomic` has worked for me, and I understood them perfectly. This doesn't mean that using `std::mutex` is "*superior or inferior*" in my experience; on the contrary, it's possible that in certain scenarios, `std::mutex` might be more efficient and others that are less efficient.
 
 ### Last Example
 
