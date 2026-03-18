@@ -686,6 +686,8 @@ int Counter()
 }
 ```
 
+> Some compilers will throw a warning if you don't declare the `nSharedValue` variable outside the critical section.
+
 ```asm
 PUSH RCX
 MOV RCX, QWORD PTR[lSync]
@@ -699,7 +701,5 @@ POP RCX
 
 RET
 ```
-
-> Some compilers will throw a warning if you don't declare the `nSharedValue` variable outside the critical section.
 
 Both ASM codes are exactly the same, but in the first case it is safe and in the second case it is potentially dangerous (both for the variable declaration and for "forgetting" to do the Leave section)
