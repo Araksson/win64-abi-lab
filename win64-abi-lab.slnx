@@ -7,6 +7,7 @@
   <Project Path="case07_translation_units/case07_translation_units.vcxproj" Id="899b067d-2e3b-4ea4-bd11-b2bbd64bf84b" />
   <Project Path="case08_branch_prediction_vs_branchless/case08_branch_prediction_vs_branchless.vcxproj" Id="6e541d46-1696-4bf5-b1b6-a5332458bc8c" />
   <Project Path="case09_thread_synchronization/case09_thread_synchronization.vcxproj" Id="8986f48a-a93f-4742-9242-b04370a68f63" />
+  <Project Path="case10_file_io/case10_file_io.vcxproj" Id="1db7d81c-5510-4662-921d-4cba5833095d" />
   <Project Path="D:/Proyectos/win64-abi-lab/case01_return_value_registers/case01_return_value_registers.vcxproj" Id="ce0ff0a9-7408-43ab-8edf-6f17a017e35f">
     <Build Solution="*|x86" Project="false" />
     <Build Solution="Release|x64" Project="false" />
