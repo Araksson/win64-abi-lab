@@ -205,6 +205,8 @@ Seek -> Read -> Seek -> Read -> ...
 
 > In this case, depending on how it's done, it can be balanced or very inefficient. In my custom file management system, I manage compiled and compressed files (using specific compression/decompression algorithms), and this will inevitably be done randomly. So (broadly speaking), the mapping is balanced by simply accessing the offset of the large file, decompressing it (if necessary) to an external buffer, and then the mapping pointer is automatically released after a certain time (managed by the OS). This causes the "wave" of RAM usage to "calm down" and then "risen" again in another area, maintaining consistent RAM usage. Otherwise, too many `SysCalls` are made to move the file offset, read, temporary buffers of temporary buffers (yes, basically double temporary buffers), and it ends up being very difficult to keep the system balanced.
 
+> Incidentally, it should be noted that for Win32 API and Nt API there are 64-bit versions for the Seek (`SetFilePointer`) functions for files larger than 4GB.
+
 ### Key Insight
 
 ```cmd
