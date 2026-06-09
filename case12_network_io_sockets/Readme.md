@@ -333,6 +333,8 @@ The `PostAccept` is initialized the connections. The number of connections does 
 
 ```cpp
 
+static LPFN_ACCEPTEX lpAcceptEx = nullptr;
+
 BlBool LoadAcceptEx(SOCKET listenSocket)
 {
 	if (lpAcceptEx)
