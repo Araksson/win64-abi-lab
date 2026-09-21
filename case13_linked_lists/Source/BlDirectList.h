@@ -43,9 +43,9 @@ private:
 		_Node->*NextField = _Next;
 	}
 
-	inline void SetNodeBack(_Ty* _Node, _Ty* _Next) const
+	inline void SetNodeBack(_Ty* _Node, _Ty* _Back) const
 	{
-		_Node->*BackField = _Next;
+		_Node->*BackField = _Back;
 	}
 
 	inline void Init(_Ty* _Node)
